@@ -14,6 +14,7 @@ import pyro.distributions as dist
 
 import matplotlib.pyplot as plt
 
+dtype = torch.FloatTensor
 
 # Distributions
 # -----------------------------------------------------------------------------------------------------------------------------
@@ -22,7 +23,7 @@ class CoxPartialLikelihood(dist.TorchDistribution):
     support = constraints.real
     has_rsample = False
 
-    def __init__(self, pred, sampling_proportion=None, dtype=torch.FloatTensor):
+    def __init__(self, pred, sampling_proportion=None, dtype=dtype):
         self.pred = pred
         self.dtype = dtype
         self.sampling_proportion = sampling_proportion
@@ -51,7 +52,7 @@ class CoxPartialLikelihood(dist.TorchDistribution):
 # -----------------------------------------------------------------------------------------------------------------------------
 
 class PCox():
-    def __init__(self, predictor=None, guide=None, optimizer=None, loss=None, sampling_proportion=None, dtype=torch.FloatTensor):
+    def __init__(self, predictor=None, guide=None, optimizer=None, loss=None, sampling_proportion=None, dtype=dtype):
         self.predictor = predictor
         self.guide = guide
         self.optimizer = optimizer
@@ -73,8 +74,8 @@ class PCox():
             pred = self.predictor(data)
         else:
 
-            theta =  pyro.sample("theta", dist.StudentT(1, loc=0, scale=0.01).expand([data[1].shape[1], 1])).type(self.dtype)
-            #theta =  pyro.sample("theta", dist.Normal(0, 1).expand([data[1].shape[1], 1])).type(self.dtype)
+            #theta =  pyro.sample("theta", dist.StudentT(1, loc=0, scale=0.01).expand([data[1].shape[1], 1])).type(self.dtype)
+            theta =  pyro.sample("theta", dist.Normal(0, 2).expand([data[1].shape[1], 1])).type(self.dtype)
             pred = torch.mm(data[1], theta)
 
         # Likelihood
