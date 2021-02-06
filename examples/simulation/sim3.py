@@ -42,12 +42,12 @@ warnings.filterwarnings("ignore")
 
 dtype = torch.FloatTensor
 
-np.random.seed(44)
-torch.manual_seed(44)
+np.random.seed(46)
+torch.manual_seed(46)
 
-sim_name = 'sim1'
+sim_name = 'sim3'
 P = 10
-c = 0.95
+c = 0.5
 # Simulation Settings:
 # -----------------------------------------------------------------------------------------------------------------------------
 P_binary = int(P/2)
@@ -57,11 +57,11 @@ theta = np.random.uniform(-2, 2, (P, 1))
 np.savetxt('./output/simulation/' + sim_name + '/theta.txt', theta)
 
 TVC = sim.TVC(theta=theta, P_binary=P_binary, P_continuous=P_continuous, censoring=None, dtype=dtype)
-TVC.make_lambda0(scaling=1000000)
+TVC.make_lambda0(scaling=50000)
 
 #t_lambda0, lambda0 = TVC.return_lambda0()
 #plt.step(t_lambda0, lambda0)
-#np.sum([torch.sum(TVC.sample()[0][:, -1]).numpy() for ii in range(1000)])
+np.sum([torch.sum(TVC.sample()[0][:, -1]).numpy() for ii in range(1000)])
 
 # Run Inference
 # -----------------------------------------------------------------------------------------------------------------------------

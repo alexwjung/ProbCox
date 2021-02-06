@@ -42,12 +42,12 @@ warnings.filterwarnings("ignore")
 
 dtype = torch.FloatTensor
 
-np.random.seed(44)
-torch.manual_seed(44)
+np.random.seed(45)
+torch.manual_seed(45)
 
-sim_name = 'sim1'
+sim_name = 'sim2'
 P = 10
-c = 0.95
+c = 0.90
 # Simulation Settings:
 # -----------------------------------------------------------------------------------------------------------------------------
 P_binary = int(P/2)

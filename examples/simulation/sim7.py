@@ -42,11 +42,11 @@ warnings.filterwarnings("ignore")
 
 dtype = torch.FloatTensor
 
-np.random.seed(44)
-torch.manual_seed(44)
+np.random.seed(50)
+torch.manual_seed(50)
 
-sim_name = 'sim1'
-P = 10
+sim_name = 'sim7'
+P = 100
 c = 0.95
 # Simulation Settings:
 # -----------------------------------------------------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ theta = np.random.uniform(-2, 2, (P, 1))
 np.savetxt('./output/simulation/' + sim_name + '/theta.txt', theta)
 
 TVC = sim.TVC(theta=theta, P_binary=P_binary, P_continuous=P_continuous, censoring=None, dtype=dtype)
-TVC.make_lambda0(scaling=1000000)
+TVC.make_lambda0(scaling=50000000)
 
 #t_lambda0, lambda0 = TVC.return_lambda0()
 #plt.step(t_lambda0, lambda0)
@@ -110,5 +110,13 @@ for iteration in range(1000):
     # execute R script
     subprocess.check_call(['Rscript', './tmp/' + sim_name + '.R'], shell=False)
 
-
+'''
+f, ax = plt.subplots(figsize=(6, 6))
+ax.plot(theta, pyro.get_param_store()['AutoMultivariateNormal.loc'].detach().numpy(), ls='', marker='.')
+ax.set_xlim([-2, 2])
+ax.set_ylim([-2, 2])
+ax.plot(ax.get_xlim(), ax.get_ylim(), ls="--", c=".3")
+plt.show()
+plt.close()
+'''
 print('finsihed')
