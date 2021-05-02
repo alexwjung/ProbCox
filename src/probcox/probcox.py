@@ -14,7 +14,6 @@ import pyro
 import pyro.distributions as dist
 
 import numpy as np
-
 from multiprocessing import Pool
 
 dtype = torch.FloatTensor
@@ -38,13 +37,14 @@ class CoxPartialLikelihood(dist.TorchDistribution):
 
     def log_prob(self, surv):
         if self.sampling_proportion:
-            censor_ratio = torch.tensor([self.sampling_proportion[0]/self.sampling_proportion[1]])
-            uncensored_ratio = torch.tensor([self.sampling_proportion[2]/self.sampling_proportion[3]])
+            censor_ratio = torch.tensor([self.sampling_proportion[0]/self.sampling_proportion[1]]).type(self.dtype)
+            uncensored_ratio = torch.tensor([self.sampling_proportion[2]/self.sampling_proportion[3]]).type(self.dtype)
         else:
-            censor_ratio = torch.tensor([1])
-            uncensored_ratio = torch.tensor([1])
+            censor_ratio = torch.tensor([1]).type(self.dtype)
+            uncensored_ratio = torch.tensor([1]).type(self.dtype)
+
         # random tie breaking
-        surv[surv[:, -1] == 1, 1] = surv[surv[:, -1] == 1, 1] - torch.normal(0.00001, 0.000001, (torch.sum(surv[:, -1] == 1),))
+        surv[surv[:, -1] == 1, 1] = surv[surv[:, -1] == 1, 1] - torch.normal(0.00001, 0.000001, (torch.sum(surv[:, -1] == 1),)).type(self.dtype)
         event_times = surv[surv[:, -1] == 1, 1][:, None]
         risk_set = ((surv[:, 1] >= event_times) * (surv[:, 0] < event_times)).type(self.dtype)
         aa = torch.sum(self.pred[surv[:, -1] == 1]) *  uncensored_ratio
@@ -81,7 +81,7 @@ class PCox():
             pred = torch.mm(data[1], theta)
 
         # Likelihood
-        pyro.sample("obs", CoxPartialLikelihood(pred=pred, sampling_proportion=self.sampling_proportion), obs=data[0])
+        pyro.sample("obs", CoxPartialLikelihood(pred=pred, sampling_proportion=self.sampling_proportion, dtype=self.dtype), obs=data[0])
 
     def make_guide(self, rank):
         if self.guide:
