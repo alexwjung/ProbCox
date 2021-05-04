@@ -47,7 +47,7 @@ os.chdir('/nfs/nobackup/gerstung/awj/projects/ProbCox/')
 def custom_mean(X, W, col_idx):
     '''
     - average for paramters of an array selcted by an indexing matrix
-    
+
     X :: array to apply mean along axis=0
     W :: indexing which elements to use for mean computatiuon
     col_idx :: indexing the columns where W is applied - otherwise standard mean without selecting elements
@@ -55,14 +55,14 @@ def custom_mean(X, W, col_idx):
     m = []
     assert X.shape == W.shape
     N, M = X.shape
-    
+
     for jj in range(M):
         if col_idx[jj] == True:
             m.append(np.mean(X[W[:, jj], jj]))
         else:
             m.append(np.mean(X[:, jj]))
     return(np.asarray(m))
-        
+
 
 
 # Plot Settings
@@ -79,28 +79,28 @@ plt.rcParams['axes.spines.right'] = False
 small_plot = True # sample 0 parameters - otherwise figure gets too large
 
 
-# Plot 
+# Plot
 # =======================================================================================================================
 
-theta = np.asarray(pd.read_csv('./out/sim_hd/theta.txt', header=None))
+theta = np.asarray(pd.read_csv('./out/simulation/sim_hd/theta.txt', header=None))
 
-fig, ax = plt.subplots(1, 2, figsize=(8.27*0.90, 11.69/4), dpi=600, sharey=True)  
+fig, ax = plt.subplots(1, 2, figsize=(8.27*0.90, 11.69/4), dpi=600, sharey=True)
 fig.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.1, hspace=None)
 
 suffix = 'rank50_b1024'
-theta_est = pd.read_csv('./out/sim_hd/probcox' + str(suffix) + '_theta.txt', header=None, sep=';')
+theta_est = pd.read_csv('./out/simulation/sim_hd/probcox' + str(suffix) + '_theta.txt', header=None, sep=';')
 theta_est = theta_est.dropna(axis=0)
 theta_est = theta_est.groupby(0).first().reset_index()
 theta_est = theta_est.iloc[:, 1:-1]
 theta_est = np.asarray(theta_est).astype(float)
 
-theta_est_lower = pd.read_csv('./out/sim_hd/probcox' + str(suffix) + '_theta_lower.txt', header=None, sep=';')
+theta_est_lower = pd.read_csv('./out/simulation/sim_hd/probcox' + str(suffix) + '_theta_lower.txt', header=None, sep=';')
 theta_est_lower = theta_est_lower.dropna(axis=0)
 theta_est_lower = theta_est_lower.groupby(0).first().reset_index()
 theta_est_lower = theta_est_lower.iloc[:100, 1:-1]
 theta_est_lower = np.asarray(theta_est_lower).astype(float)
 
-theta_est_upper = pd.read_csv('./out/sim_hd/probcox' + str(suffix) + '_theta_upper.txt', header=None, sep=';')
+theta_est_upper = pd.read_csv('./out/simulation/sim_hd/probcox' + str(suffix) + '_theta_upper.txt', header=None, sep=';')
 theta_est_upper = theta_est_upper.dropna(axis=0)
 theta_est_upper = theta_est_upper.groupby(0).first().reset_index()
 theta_est_upper = theta_est_upper.iloc[:100, 1:-1]
@@ -148,7 +148,7 @@ ax[0].set_title(r'ProbCox', fontsize=10)
 
 
 # glmnet
-theta_est = pd.read_csv('./out/sim_hd/R_theta_1se.txt', header=None, sep=';')
+theta_est = pd.read_csv('./out/simulation/sim_hd/R_theta_1se.txt', header=None, sep=';')
 theta_est = theta_est.dropna(axis=0)
 theta_est = theta_est.groupby(0).first().reset_index()
 theta_est = np.asarray(theta_est.iloc[:, 1:])
@@ -178,23 +178,4 @@ ax[1].plot(ax[1].get_xlim(), ax[1].get_ylim(), ls=':', color='black', linewidth=
 ax[0].legend(frameon=False, prop={'size': 8}, loc='lower right')
 ax[1].set_title(r'glmnet', fontsize=10)
 
-plt.savefig('./out/figures/hd.eps', bbox_inches='tight', dpi=600)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+plt.savefig('./out/simulation/figures/hd.eps', bbox_inches='tight', dpi=600)

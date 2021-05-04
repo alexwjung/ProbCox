@@ -47,7 +47,7 @@ scale = 0.5  # Scaling factor for Baseline Hazard
 
 
 
-# Simulation 
+# Simulation
 # =======================================================================================================================
 
 TVC = pcox.TVC(theta=theta, P_binary=P_binary, P_continuous=P_continuous, dtype=dtype)
@@ -61,13 +61,13 @@ for __ in (range(3)):
     X = torch.cat((X, b))
 surv
 
-# Table 
+# Table
 # =======================================================================================================================
 dd = pd.DataFrame(np.round(surv.numpy().astype(int), 2))
 X = pd.DataFrame(np.round(X.numpy(), 2))
 
 dd = pd.concat([dd, X], axis=1)
 dd.columns = ['start', 'stop', 'event' ,'X1' ,'X2' ,'X3' ,'X4' ,'X5' ,'X6']
-dd.to_csv('./out/tables/example.csv', index=False)
+dd.to_csv('./out/simulation/tables/example.csv', index=False)
 
 print('finished')

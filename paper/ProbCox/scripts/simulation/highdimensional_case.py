@@ -4,10 +4,10 @@
 High Dimensional Case Simulation:
 
 
-Moderate sized simulation with P >> N >> I 
+Moderate sized simulation with P >> N >> I
 
 
-individuals:  10000 
+individuals:  10000
 covaraites:   5000 binary (0.2), 5000 Normal(0, 1)
 theta:        ~ N(0, 0.75^2)
 censoring:    ~ 0.72
@@ -57,14 +57,14 @@ try:
     run_id = int(sys.argv[1])
 except:
     run_id = 0
-    
+
 if run_id == 0:
     try:
-        shutil.rmtree('./out/' + sim_name)
+        shutil.rmtree('./out/simulation/' + sim_name)
     except:
         pass
-    try: 
-        os.mkdir('./out/' + sim_name)
+    try:
+        os.mkdir('./out/simulation/' + sim_name)
     except:
         pass
 
@@ -81,12 +81,12 @@ theta = np.concatenate((theta[:10], np.zeros((4990, 1)), theta[10:], np.zeros((4
 scale = 4  # Scaling factor for Baseline Hazard
 
 
-# Simulation 
+# Simulation
 # =======================================================================================================================
 
 # save theta
 if run_id == 0:
-    np.savetxt('./out/' + sim_name + '/theta.txt', np.round(theta, 5))
+    np.savetxt('./out/simulation/' + sim_name + '/theta.txt', np.round(theta, 5))
     # Rough distribution for the corresponding linear effect size
     X = np.concatenate((np.random.binomial(1, 0.2, (1000, P_binary)), np.random.normal(0, 1, (1000, P_continuous))), axis=1)
     plt.hist(np.matmul(X, theta))
@@ -108,9 +108,9 @@ if run_id == 0:
     plt.step(t_l, ll)
     plt.show()
     plt.close()
-    np.savetxt('./out/' + sim_name + '/lambda0.txt', np.concatenate((t_l[:, None], ll), axis=1))
+    np.savetxt('./out/simulation/' + sim_name + '/lambda0.txt', np.concatenate((t_l[:, None], ll), axis=1))
 
-# Sample Data 
+# Sample Data
 np.random.seed(run_id)
 torch.manual_seed(run_id)
 surv = torch.zeros((0, 3))
@@ -124,22 +124,22 @@ if run_id == 0:
     plt.hist(surv[surv[:, -1]==1, 1])
     plt.show()
     plt.close()
-    
+
 total_obs = surv.shape[0]
 total_events = torch.sum(surv[:, -1] == 1).numpy().tolist()
 
 # Save information on intervall observation and number of events
 if run_id != 0:
-    with open('./out/' + sim_name + '/N_obs.txt', 'a') as write_out:
+    with open('./out/simulation/' + sim_name + '/N_obs.txt', 'a') as write_out:
         write_out.write(str(run_id) + '; ' + str(surv.shape[0]) + '; ' + str(torch.sum(surv[:, -1]).detach().numpy().tolist()))
-        write_out.write('\n')     
-    
-# Save data for R   
+        write_out.write('\n')
+
+# Save data for R
 if run_id != 0:
     pd.DataFrame(np.concatenate((surv, X), axis=1)).to_csv('./tmp/' + str(run_id) + '.csv', sep=';', index=False, header=False)
 
 
-# Inference Setup 
+# Inference Setup
 # =======================================================================================================================
 # Custom linear predictor - Here: simple linear combination
 def predictor(data):
@@ -149,7 +149,7 @@ def predictor(data):
 
 def evaluate(surv, X, rank, batchsize, sampling_proportion, iter_, run_suffix, predictor=predictor, sim_name=sim_name, run_id=run_id):
     sampling_proportion[1] = batchsize
-    eta=5 # paramter for optimization 
+    eta=5 # paramter for optimization
     run = True # repeat initalization if NAN encounterd while training - gauge correct optimization settings
     while run:
         run = False
@@ -165,18 +165,18 @@ def evaluate(surv, X, rank, batchsize, sampling_proportion, iter_, run_suffix, p
             if loss[-1] != loss[-1]:
                 eta = eta * 0.1
                 run=True
-                break   
+                break
     g = m.return_guide()
     out = g.quantiles([0.025, 0.5, 0.975])
-    with open('./out/' + sim_name + '/probcox' + run_suffix + '_theta_lower.txt', 'a') as write_out:
+    with open('./out/simulation/' + sim_name + '/probcox' + run_suffix + '_theta_lower.txt', 'a') as write_out:
         write_out.write(str(run_id) + '; ')
         write_out.write(''.join([str(ii) + '; ' for ii in out['theta'][0].detach().numpy()[:, 0].tolist()]))
-        write_out.write('\n')   
-    with open('./out/' + sim_name + '/probcox' + run_suffix + '_theta.txt', 'a') as write_out:
+        write_out.write('\n')
+    with open('./out/simulation/' + sim_name + '/probcox' + run_suffix + '_theta.txt', 'a') as write_out:
         write_out.write(str(run_id) + '; ')
         write_out.write(''.join([str(ii) + '; ' for ii in out['theta'][1].detach().numpy()[:, 0].tolist()]))
         write_out.write('\n')
-    with open('./out/' + sim_name + '/probcox' + run_suffix + '_theta_upper.txt', 'a') as write_out:
+    with open('./out/simulation/' + sim_name + '/probcox' + run_suffix + '_theta_upper.txt', 'a') as write_out:
         write_out.write(str(run_id) + '; ')
         write_out.write(''.join([str(ii) + '; ' for ii in out['theta'][2].detach().numpy()[:, 0].tolist()]))
         write_out.write('\n')
@@ -192,20 +192,20 @@ if run_id != 0:
 
     pyro.clear_param_store()
     out = evaluate(run_suffix='rank50', rank=50, batchsize=512, iter_=60000, surv=surv, X=X, sampling_proportion=[total_obs, None, total_events, None])
-    
+
     pyro.clear_param_store()
     out = evaluate(run_suffix='rank50_b1024', rank=50, batchsize=1024, iter_=60000, surv=surv, X=X, sampling_proportion=[total_obs, None, total_events, None])
 
 
     # execute R script
-    a = ''' 
+    a = '''
     rm(list=ls())
     library(survival)
     library(glmnet)
     require(doMC)
     registerDoMC(cores = 3)
     ROOT_DIR =  '/nfs/nobackup/gerstung/awj/projects/ProbCox'
-    ''' 
+    '''
 
     b = 'sim_name = ' + "'" + str(run_id)+ "'"
 
@@ -218,11 +218,11 @@ if run_id != 0:
     cv.fit <-cv.glmnet(as.matrix(sim[, 4:10003]), yss, family ="cox", nfolds=3, parallel=TRUE, type.measure ="C", lambda=seq(0.01, 0.02, 0.0015))
     m = glmnet(as.matrix(sim[, 4:10003]), yss, family ="cox", lambda=cv.fit$lambda.min)
     x = paste(sim_name, paste(unname(coef(m)), collapse="; "), sep='; ')
-    write(x, file = paste(ROOT_DIR, '/out/sim_hd/R_theta.txt', sep=''), ncolumns = 1, append = TRUE, sep = ";")
+    write(x, file = paste(ROOT_DIR, '/out/simulation/sim_hd/R_theta.txt', sep=''), ncolumns = 1, append = TRUE, sep = ";")
 
     m = glmnet(as.matrix(sim[, 4:10003]), yss, family ="cox", lambda=cv.fit$lambda.1se)
     x = paste(sim_name, paste(unname(coef(m)), collapse="; "), sep='; ')
-    write(x, file = paste(ROOT_DIR, '/out/sim_hd/R_theta_1se.txt', sep=''), ncolumns = 1, append = TRUE, sep = ";")
+    write(x, file = paste(ROOT_DIR, '/out/simulation/sim_hd/R_theta_1se.txt', sep=''), ncolumns = 1, append = TRUE, sep = ";")
 
     '''
 
