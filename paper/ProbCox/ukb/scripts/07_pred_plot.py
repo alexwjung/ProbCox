@@ -1,5 +1,7 @@
+'''
+Evaluating the predictive performance of the model
+'''
 
-# -----------------------------------------------------------------------------------------------------------------------------
 import os
 import sys
 import glob
@@ -38,7 +40,6 @@ import matplotlib.pyplot as plt
 
 # -----------------------------------------------------------------------------------------------------------------------------
 
-
 mpl.rcParams['axes.spines.right'] = False
 mpl.rcParams['axes.spines.top'] = False
 
@@ -52,7 +53,7 @@ plt.rcParams['axes.spines.right'] = False
 
 sys.path.append('/nfs/nobackup/gerstung/awj/projects/ProbCox/ProbCox/')
 
-import probcox as pcox 
+import probcox as pcox
 importlib.reload(pcox)
 
 import simulation as sim
@@ -75,10 +76,8 @@ ROOT_DIR = '/nfs/research1/gerstung/sds/sds-ukb-cancer/'
 
 landmarks = torch.load(ROOT_DIR + 'projects/ProbCox/output/landmark')
 
-    
 fig, ax = plt.subplots(1, 2, figsize=(8.27, 11.69/4), dpi=300)
 fig.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.40, hspace=None)
-
 
 # ROC plot
 fpr={}
@@ -110,22 +109,22 @@ ax[0].legend(loc="lower right", frameon=False, prop={'size': 9})
 # KM plot
 pp = np.percentile(landmarks['train'][:, 2], [25, 75, 90, 99])
 idx = landmarks['test'][:, 2]>=pp[-1]
-tt, km = pcox.KM(times=landmarks['test'][idx, 0], events=landmarks['test'][idx, 1])   
+tt, km = pcox.KM(times=landmarks['test'][idx, 0], events=landmarks['test'][idx, 1])
 ax[1].step(tt, km, c='.1', label=r'$>= q_{0.99}$')
 
 idx = landmarks['test'][:, 2]>=pp[-2]
-tt, km = pcox.KM(times=landmarks['test'][idx, 0], events=landmarks['test'][idx, 1])   
+tt, km = pcox.KM(times=landmarks['test'][idx, 0], events=landmarks['test'][idx, 1])
 ax[1].step(tt, km, c='.4', label=r'$>= q_{0.90}$')
 
 idx = landmarks['test'][:, 2]>=pp[-3]
-tt, km = pcox.KM(times=landmarks['test'][idx, 0], events=landmarks['test'][idx, 1])   
+tt, km = pcox.KM(times=landmarks['test'][idx, 0], events=landmarks['test'][idx, 1])
 ax[1].step(tt, km, c='.7', label=r'$>= q_{0.75}$')
 
 idx = landmarks['test'][:, 2]<=pp[-4]
-tt, km = pcox.KM(times=landmarks['test'][idx, 0], events=landmarks['test'][idx, 1])   
+tt, km = pcox.KM(times=landmarks['test'][idx, 0], events=landmarks['test'][idx, 1])
 ax[1].step(tt, km, c='.9', label=r'$<= q_{0.25}$')
 
-tt, km = pcox.KM(times=landmarks['test'][:, 0], events=landmarks['test'][:, 1])   
+tt, km = pcox.KM(times=landmarks['test'][:, 0], events=landmarks['test'][:, 1])
 ax[1].step(tt, km, c='red', label=r'all', ls=':')
 
 ax[1].set_xlim(0, 3650)
@@ -135,7 +134,4 @@ ax[1].set_xlabel(r'$Time$')
 ax[1].set_ylabel(r'$Survival \hspace{0.1cm} Probability$')
 ax[1].legend(loc="lower left", frameon=False, prop={'size': 9})
 
-
-#plt.show()
-#plt.close()
 plt.savefig(ROOT_DIR + 'projects/ProbCox/output/pred_plot.eps', bbox_inches='tight')

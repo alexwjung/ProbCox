@@ -1,5 +1,7 @@
+'''
+Using the predicted values to obtain an estimator for the baseline hazard via the breslow estimator
+'''
 
-# -----------------------------------------------------------------------------------------------------------------------------
 import os
 import sys
 import glob
@@ -33,7 +35,7 @@ import matplotlib.pyplot as plt
 
 sys.path.append('/nfs/nobackup/gerstung/awj/projects/ProbCox/ProbCox/')
 
-import probcox as pcox 
+import probcox as pcox
 importlib.reload(pcox)
 
 import simulation as sim
@@ -75,27 +77,9 @@ delta_time.append(0.1)
 delta_time = np.asarray(delta_time)[:, None]
 
 delta_time = np.asarray([np.sum(delta_time[jj==tt], axis=0) for jj in np.unique(tt)])
-basehaz = np.asarray([np.sum(basehaz[jj==tt], axis=0) for jj in np.unique(tt)])[:, None]  
+basehaz = np.asarray([np.sum(basehaz[jj==tt], axis=0) for jj in np.unique(tt)])[:, None]
 tt = np.unique(tt)
 basehaz = basehaz/delta_time
 A0 = np.copy(basehaz)
 
-''' 
-for ii in range(1,100):
-    tt, basehaz = Breslow(surv, linpred[:, ii, None])
-
-    delta_time =[]
-    for jj in np.arange(0, tt.shape[0]-1):
-        delta_time.append(tt[jj+1] - tt[jj])
-    delta_time.append(0.1)
-    delta_time = np.asarray(delta_time)[:, None]
-
-    delta_time = np.asarray([np.sum(delta_time[jj==tt], axis=0) for jj in np.unique(tt)])    
-    basehaz = np.asarray([np.sum(basehaz[jj==tt], axis=0) for jj in np.unique(tt)])[:, None]      
-    tt = np.unique(tt)
-    basehaz = basehaz/delta_time
-    A0 = np.concatenate((A0, basehaz), axis=1)
-'''    
 torch.save({'tt': tt[:-1], 'dt': delta_time[:-1], 'A0': A0[:-1]}, ROOT_DIR + 'projects/ProbCox/output/Breslow')
-
-

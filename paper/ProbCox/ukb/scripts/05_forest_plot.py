@@ -1,5 +1,7 @@
+'''
+generate forest plot from main paper
+'''
 
-# -----------------------------------------------------------------------------------------------------------------------------
 import os
 import sys
 import glob
@@ -47,7 +49,7 @@ plt.rcParams['axes.spines.right'] = False
 
 sys.path.append('/nfs/nobackup/gerstung/awj/projects/ProbCox/ProbCox/')
 
-import probcox as pcox 
+import probcox as pcox
 importlib.reload(pcox)
 
 import simulation as sim
@@ -82,7 +84,6 @@ icd10_code_names.remove('I10 (essential (primary) hypertension)')
 icd10_code_names = np.asarray(icd10_code_names)
 icd10_codes = icd10_codes.groupby(0).first()
 
-
 baseline_names = np.asarray(['Sex', 'Alcohol', 'Smoking', 'LDL', 'HDL', 'Triglyceride', 'Vigorous activity', 'Underweigth', 'Overweight', 'Obese', 'BP elevated', 'Hypertension 1', 'Hypertension 2'])
 
 # -----------------------------------------------------------------------------------------------------------------------------
@@ -90,8 +91,6 @@ out = torch.load(ROOT_DIR + 'projects/ProbCox/output/guide')
 
 
 fig, ax = plt.subplots(2, 1, figsize=(8.27, 11.69), dpi=300, sharex=True, gridspec_kw={'height_ratios': [1, 1]})
-
-
 fig.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=None, hspace=0.0)
 
 theta_lower = np.exp(out['theta'][0].detach().numpy())
@@ -100,8 +99,6 @@ theta_upper = np.exp(out['theta'][2].detach().numpy())
 idx_base = np.argsort(theta[:13:, 0])
 
 ax[0].errorbar(y=range(13), x=theta[:13][idx_base], xerr=(theta[:13, 0][idx_base] - theta_lower[:13, 0][idx_base], theta_upper[:13, 0][idx_base] - theta[:13, 0][idx_base]),  c='.2', ls='', marker='.', markersize='7', linewidth=2, capthick=2, capsize=4)
-
-
 ax[0].axvline(1, linewidth=0.5, c='r', ls='--')
 ax[0].set_yticks(range(13))
 ax[0].set_yticklabels(baseline_names[idx_base])
@@ -149,8 +146,3 @@ ax[1].set_xlabel(r'$exp[\theta$]')
 #plt.show()
 #plt.close()
 plt.savefig(ROOT_DIR + 'projects/ProbCox/output/forest_plot.eps', bbox_inches='tight')
-
-
-
-
-

@@ -72,12 +72,12 @@ if run_id == 0:
 # Simulation Settings
 # =======================================================================================================================
 
-I = 5000 # Number of Individuals
+I = 2000 # Number of Individuals
 P_binary = 3
 P_continuous = 3
 P = P_binary + P_continuous
 theta = np.asarray([0.8, -0.5, 0, -0.7, 1, 0])[:, None]
-scale = 15  # Scaling factor for Baseline Hazard
+scale = 10  # Scaling factor for Baseline Hazard
 
 
 # Simulation
@@ -160,8 +160,6 @@ def evaluate(surv, X, batchsize, sampling_proportion, iter_, run_suffix, predict
             idx = np.unique(np.concatenate((np.random.choice(np.where(surv[:, -1]==1)[0], 2, replace=False), np.random.choice(range(surv.shape[0]), batchsize-2, replace=False)))) # random sample of data - force at least two events (no evaluation otherwise)
             data=[surv[idx], X[idx]] # subsampled data
             loss.append(m.infer(data=data))
-            data=[surv[idx], X[idx]] # subsampled data
-            loss.append(m.infer(data=data))
             # divergence check
             if loss[-1] != loss[-1]:
                 eta = eta * 0.1
@@ -188,19 +186,19 @@ def evaluate(surv, X, batchsize, sampling_proportion, iter_, run_suffix, predict
 if run_id != 0:
     # batch model:
     pyro.clear_param_store()
-    out = evaluate(run_suffix='full', batchsize=total_obs, iter_=25000, surv=surv, X=X, sampling_proportion=[total_obs, None, total_events, None])
+    out = evaluate(run_suffix='full', batchsize=total_obs, iter_=15000, surv=surv, X=X, sampling_proportion=[total_obs, None, total_events, None])
 
     pyro.clear_param_store()
-    out = evaluate(run_suffix='512', batchsize=512, iter_=25000, surv=surv, X=X, sampling_proportion=[total_obs, None, total_events, None])
+    out = evaluate(run_suffix='512', batchsize=512, iter_=15000, surv=surv, X=X, sampling_proportion=[total_obs, None, total_events, None])
 
     pyro.clear_param_store()
-    out = evaluate(run_suffix='256', batchsize=256, iter_=25000, surv=surv, X=X, sampling_proportion=[total_obs, None, total_events, None])
+    out = evaluate(run_suffix='256', batchsize=256, iter_=15000, surv=surv, X=X, sampling_proportion=[total_obs, None, total_events, None])
 
     pyro.clear_param_store()
-    out = evaluate(run_suffix='128', batchsize=128, iter_=25000, surv=surv, X=X, sampling_proportion=[total_obs, None, total_events, None])
+    out = evaluate(run_suffix='128', batchsize=128, iter_=15000, surv=surv, X=X, sampling_proportion=[total_obs, None, total_events, None])
 
     pyro.clear_param_store()
-    out = evaluate(run_suffix='64', batchsize=64, iter_=25000, surv=surv, X=X, sampling_proportion=[total_obs, None, total_events, None])
+    out = evaluate(run_suffix='64', batchsize=64, iter_=15000, surv=surv, X=X, sampling_proportion=[total_obs, None, total_events, None])
 
 
     # execute R script

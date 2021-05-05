@@ -1,5 +1,9 @@
+'''
 
-# -----------------------------------------------------------------------------------------------------------------------------
+Compute concordance index
+
+'''
+
 import os
 import sys
 import glob
@@ -33,7 +37,7 @@ import matplotlib.pyplot as plt
 
 sys.path.append('/nfs/nobackup/gerstung/awj/projects/ProbCox/ProbCox/')
 
-import probcox as pcox 
+import probcox as pcox
 importlib.reload(pcox)
 
 import simulation as sim
@@ -54,22 +58,16 @@ torch.manual_seed(34)
 ROOT_DIR = '/nfs/research1/gerstung/sds/sds-ukb-cancer/'
 # -----------------------------------------------------------------------------------------------------------------------------
 
-# train 
+# train
 dd = torch.load(ROOT_DIR + 'projects/ProbCox/output/prediction_train')
 ci_train = pcox.metrics(surv=dd['Surv'], linpred=dd['Pred'],processes=12).concordance()
 
-# valid 
+# valid
 dd = torch.load(ROOT_DIR + 'projects/ProbCox/output/prediction_valid')
 ci_valid = pcox.metrics(surv=dd['Surv'], linpred=dd['Pred'],processes=12).concordance()
 
-# test 
+# test
 dd = torch.load(ROOT_DIR + 'projects/ProbCox/output/prediction_test')
 ci_test = pcox.metrics(surv=dd['Surv'], linpred=dd['Pred'],processes=12).concordance()
 
-
 torch.save({'ci_train': ci_train, 'ci_valid': ci_valid, 'ci_test': ci_test}, ROOT_DIR + 'projects/ProbCox/output/concordance')
-
-
-
-
-a = torch.load( ROOT_DIR + 'projects/ProbCox/output/concordance')

@@ -1,11 +1,19 @@
+'''
+Preparing the UKB data - cleaning and filtering
 
-import os 
+- remove individuals that withdraw consent
+- remove individuals with prior CVD
+- remove individuals with missing baseline factors
+- bring data into long format
+
+'''
+import os
 import shutil
-import sys 
+import sys
 import tqdm
-import numpy as np 
+import numpy as np
 
-import pandas as pd 
+import pandas as pd
 import h5py
 import torch
 
@@ -32,7 +40,7 @@ os.mkdir(ROOT_DIR + 'projects/ProbCox/data/prepared/test/event/' + str(run_id))
 os.mkdir(ROOT_DIR + 'projects/ProbCox/data/prepared/test/censored/' + str(run_id))
 
 
-# - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 def forward_fill(x):
     for ii in range(1, x.shape[0]):
@@ -51,7 +59,7 @@ def _mean(x):
 
 ukb_idx_remove = [1074413, 1220436, 1322418, 1373016, 1484804, 1516618, 1681957, 1898968, 2280037, 2326194, 2492542, 2672990, 2719152, 2753503, 3069616, 3100207, 3114030, 3622841, 3666774, 3683210, 4167470, 4285793, 4335116, 4426913, 4454074, 4463723, 4470984, 4735907, 4739147, 4940729, 5184071, 5938951]
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 actionable_codes = ["I20 (angina pectoris)", "I21 (acute myocardial infarction)", "I22 (subsequent myocardial infarction)", "I23 (certain current complications following acute myocardial infarction)", "I24 (other acute ischaemic heart diseases)", "I25 (chronic ischaemic heart disease)", "I60 (subarachnoid haemorrhage)", "I61 (intracerebral haemorrhage)", "I62 (other nontraumatic intracranial haemorrhage)", "I63 (cerebral infarction)", "I64 (stroke, not specified as haemorrhage or infarction)", "I65 (occlusion and stenosis of precerebral arteries, not resulting in cerebral infarction)", "I66 (occlusion and stenosis of cerebral arteries, not resulting in cerebral infarction)", "I67 (other cerebrovascular diseases)", "I68 (cerebrovascular disorders in diseases classified elsewhere)", "I69 (sequelae of cerebrovascular disease)", "I46 (cardiac arrest)", "I50 (heart failure)", 'G45 (transient cerebral ischaemic attacks and related syndromes)']
 
@@ -67,20 +75,20 @@ icd10_codes = icd10_codes.groupby(0).first()
 data_iterator = pd.read_csv(ROOT_DIR + 'main/44968/ukb44968.csv', iterator=True, chunksize=1, nrows=1000, skiprows=lambda x: x in np.arange(1, 1000*run_id).tolist())
 
 for _, dd in tqdm.tqdm(enumerate(data_iterator)):
-    
+
     dd.reset_index(inplace=True)
 
     dd = dd.astype(str)
     dd = dd.replace('nan', '')
 
-    # baseline 
+    # baseline
     eid = np.asarray(dd['eid']).astype(int)
     if eid in ukb_idx_remove:
         with open(ROOT_DIR + 'projects/ProbCox/data/prepared/train/censored/' + str(run_id) + '/removed.txt', "a") as f:
             f.write('removed_id; ' + str(eid[0]))
             f.write('\n')
         continue
-        
+
     sex = np.asarray(dd['31-0.0']).astype(int)
     birthyear = np.asarray(dd['34-0.0']).astype(str)[0]
     birthmonth = np.asarray(dd['52-0.0']).astype(str)[0]
@@ -93,8 +101,8 @@ for _, dd in tqdm.tqdm(enumerate(data_iterator)):
         pass
     else:
         EOO = np.datetime64('2021-03-01', 'D')[None]
-    
-    # administrative 
+
+    # administrative
     assessment_dates = np.asarray(dd[['53-'+str(ii)+'.0' for ii in range(0,4)]])
     BMI = np.asarray(dd[['21001-'+str(ii)+'.0' for ii in range(0,4)]])
     vigorous_activity = np.asarray(dd[['904-'+str(ii)+'.0' for ii in range(4)]])
@@ -107,7 +115,7 @@ for _, dd in tqdm.tqdm(enumerate(data_iterator)):
     systolic = np.asarray([_mean(dd[[str(ll)+'-'+str(ii)+'.'+str(jj) for jj in range(2) for ll in ['4080', 95]]]) for ii in range(4)])[None, :].astype(str)
     idx = assessment_dates != ''
     assessment_dates = assessment_dates[idx]
-    
+
     if (EOO - np.asarray([assessment_dates[0]]).astype('datetime64[D]')).astype(int) < 366:
         with open(ROOT_DIR + 'projects/ProbCox/data/prepared/train/censored/' + str(run_id) + '/removed.txt', "a") as f:
             f.write('less_1year; ' + str(eid[0]))
@@ -170,7 +178,7 @@ for _, dd in tqdm.tqdm(enumerate(data_iterator)):
             f.write('var_missing; ' + str(eid[0]))
             f.write('\n')
         continue
-    if vigorous_activity[0, 0] != '':   
+    if vigorous_activity[0, 0] != '':
         vigorous_activity = vigorous_activity[idx]
         vigorous_activity = vigorous_activity[vigorous_activity!='']
         vigorous_activity = np.concatenate((vigorous_activity[None, :], np.repeat(vigorous_activity[-1], assessment_dates.shape[0]-vigorous_activity.shape[0])[None, :]), axis=1)
@@ -200,10 +208,10 @@ for _, dd in tqdm.tqdm(enumerate(data_iterator)):
             f.write('var_missing; ' + str(eid[0]))
             f.write('\n')
         continue
-    assessment_dates = assessment_dates.astype('datetime64[D]')    
+    assessment_dates = assessment_dates.astype('datetime64[D]')
 
     baseline = np.concatenate((np.repeat(sex, len(assessment_dates))[:, None], alcohol.T, smoking.T, BMI.T, LDL.T, HDL.T, triglyceride.T, diastolic.T, systolic.T, vigorous_activity.T), axis=1).astype(float)
-                                       
+
     d_codes = []
     d_dates = []
     for ii in range(0, 3000, 2):
@@ -215,36 +223,36 @@ for _, dd in tqdm.tqdm(enumerate(data_iterator)):
                 d_dates.append(a)
         except:
             pass
-    d_dates = np.asarray(d_dates).astype('datetime64[D]')   
-    d_codes = np.asarray(d_codes).astype('str')   
+    d_dates = np.asarray(d_dates).astype('datetime64[D]')
+    d_codes = np.asarray(d_codes).astype('str')
     event = 0
     action = 0
-    
-    
+
+
     ll_events = []
     ll_actions = []
-    
-    
+
+
     # check if relevant codes are present
     for ii in range(len(d_codes)):
         if d_codes[ii] in actionable_codes:
             ll_actions.append(d_dates[ii])
             action = 1
-            
+
         if d_codes[ii] in event_codes:
             ll_events.append(d_dates[ii])
             event = 1
-            
-    event_dates = np.asarray(ll_events).astype('datetime64[D]') 
-    action_dates = np.asarray(ll_actions).astype('datetime64[D]') 
-    
+
+    event_dates = np.asarray(ll_events).astype('datetime64[D]')
+    action_dates = np.asarray(ll_actions).astype('datetime64[D]')
+
     if event:
         event_dates = np.min(event_dates)
         action_dates = np.min(action_dates)
         if (event_dates - action_dates).astype(int) >= 364:
             EOO = np.minimum(action_dates, EOO)
             EOO = np.minimum(np.datetime64('2020-03-01', 'D')[None], EOO)
-            event = 0 
+            event = 0
         else:
             EOO = np.minimum(event_dates, EOO)
             EOO = (EOO - 365)
@@ -252,7 +260,7 @@ for _, dd in tqdm.tqdm(enumerate(data_iterator)):
         action_dates = np.min(action_dates)
         EOO = np.minimum(action_dates, EOO)
         EOO = np.minimum(np.datetime64('2020-03-01', 'D')[None], EOO)
-        
+
     else:
         EOO = np.minimum(np.datetime64('2020-03-01', 'D')[None], EOO)
 
@@ -260,14 +268,14 @@ for _, dd in tqdm.tqdm(enumerate(data_iterator)):
         with open(ROOT_DIR + 'projects/ProbCox/data/prepared/train/censored/' + str(run_id) + '/removed.txt', "a") as f:
             f.write('event_prior; ' + str(eid[0]))
             f.write('\n')
-            continue         
+            continue
 
     idx = np.logical_and(d_dates>= birthdate, d_dates<=EOO)
     d_dates = d_dates[idx]
-    d_codes = d_codes[idx]    
+    d_codes = d_codes[idx]
 
     dates = np.concatenate((birthdate[None], assessment_dates, d_dates, EOO))
-    
+
     baseline = np.concatenate((np.zeros((1, 10)).astype(float), baseline, np.zeros((d_dates.shape[0] + 1, 10)).astype(float)))
     d_codes = np.concatenate((np.repeat('', 1 + assessment_dates.shape[0]), d_codes, np.repeat('', 1)))
     d_codes = (d_codes[:, None] == icd10_code_names).astype(int)
@@ -300,7 +308,7 @@ for _, dd in tqdm.tqdm(enumerate(data_iterator)):
     time[-1, -1] = event
 
     data = {'time': torch.from_numpy(time),
-           'X': torch.from_numpy(X), 
+           'X': torch.from_numpy(X),
            'date': np.min(assessment_dates)[None]}
 
     if np.random.binomial(1, 0.7, (1,)):
