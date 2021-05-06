@@ -10,8 +10,8 @@ Moderate sized simulation with P >> N >> I
 individuals:  10000
 covaraites:   5000 binary (0.2), 5000 Normal(0, 1)
 theta:        ~ N(0, 0.75^2)
-censoring:    ~ 0.72
-runs:         100 - Seed = 1, 2, ..., 100
+censoring:    ~ 0.
+runs:         200 - Seed = 1, 2, ..., 200
 
 
 '''
@@ -78,7 +78,7 @@ P_continuous = 5000
 P = P_binary + P_continuous
 theta = np.random.normal(0, 0.75, 20)[:, None]
 theta = np.concatenate((theta[:10], np.zeros((4990, 1)), theta[10:], np.zeros((4990, 1))))
-scale = 4  # Scaling factor for Baseline Hazard
+scale = 2.5  # Scaling factor for Baseline Hazard
 
 
 # Simulation
@@ -158,7 +158,7 @@ def evaluate(surv, X, rank, batchsize, sampling_proportion, iter_, run_suffix, p
         m.initialize(eta=eta, rank=rank, num_particles=5)
         loss=[0]
         for ii in tqdm.tqdm(range((iter_))):
-            idx = np.concatenate((np.random.choice(np.where(surv[:, -1]==1)[0], 1, replace=False), np.random.choice(range(surv.shape[0]), batchsize-1, replace=False))) # random sample of data - force at least one event (no evaluation otherwise)
+            idx = np.unique(np.concatenate((np.random.choice(np.where(surv[:, -1]==1)[0], 1, replace=False), np.random.choice(range(surv.shape[0]), batchsize-1, replace=False)))) # random sample of data - force at least one event (no evaluation otherwise)
             data=[surv[idx], X[idx]] # subsampled data
             loss.append(m.infer(data=data))
             # divergence check
@@ -186,20 +186,20 @@ def evaluate(surv, X, rank, batchsize, sampling_proportion, iter_, run_suffix, p
 # =======================================================================================================================
 if run_id != 0:
     # batch model:
+    pyro.clear_param_store()
+    out = evaluate(run_suffix='rank5', rank=5, batchsize=512, iter_=25000, surv=surv, X=X, sampling_proportion=[total_obs, None, total_events, None])
 
     pyro.clear_param_store()
-    out = evaluate(run_suffix='rank5', rank=5, batchsize=512, iter_=60000, surv=surv, X=X, sampling_proportion=[total_obs, None, total_events, None])
+    out = evaluate(run_suffix='rank50', rank=50, batchsize=512, iter_=25000, surv=surv, X=X, sampling_proportion=[total_obs, None, total_events, None])
 
     pyro.clear_param_store()
-    out = evaluate(run_suffix='rank50', rank=50, batchsize=512, iter_=60000, surv=surv, X=X, sampling_proportion=[total_obs, None, total_events, None])
-
-    pyro.clear_param_store()
-    out = evaluate(run_suffix='rank50_b1024', rank=50, batchsize=1024, iter_=60000, surv=surv, X=X, sampling_proportion=[total_obs, None, total_events, None])
+    out = evaluate(run_suffix='rank50_b1024', rank=50, batchsize=1024, iter_=25000, surv=surv, X=X, sampling_proportion=[total_obs, None, total_events, None])
 
 
     # execute R script
     a = '''
     rm(list=ls())
+    set.seed(13)
     library(survival)
     library(glmnet)
     require(doMC)
@@ -238,5 +238,4 @@ if run_id != 0:
 
 print('finished')
 
-#for i in {1..100}; do bsub -env "VAR1=$i" -n 5 -M 30000 -R "rusage[mem=5000]" './highdimensional_case.sh'; sleep 30; done
-#for i in {101..200}; do bsub -env "VAR1=$i" -o /dev/null -e /dev/null -n 5 -M 30000 -R "rusage[mem=5000]" './highdimensional_case.sh'; sleep 30; done
+#for i in {1..200}; do bsub -env "VAR1=$i" -o /dev/null -e /dev/null -n 4 -M 30000 -R "rusage[mem=5000]" './highdimensional_case.sh'; sleep 30; done

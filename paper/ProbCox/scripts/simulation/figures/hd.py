@@ -97,13 +97,13 @@ theta_est = np.asarray(theta_est).astype(float)
 theta_est_lower = pd.read_csv('./out/simulation/sim_hd/probcox' + str(suffix) + '_theta_lower.txt', header=None, sep=';')
 theta_est_lower = theta_est_lower.dropna(axis=0)
 theta_est_lower = theta_est_lower.groupby(0).first().reset_index()
-theta_est_lower = theta_est_lower.iloc[:100, 1:-1]
+theta_est_lower = theta_est_lower.iloc[:, 1:-1]
 theta_est_lower = np.asarray(theta_est_lower).astype(float)
 
 theta_est_upper = pd.read_csv('./out/simulation/sim_hd/probcox' + str(suffix) + '_theta_upper.txt', header=None, sep=';')
 theta_est_upper = theta_est_upper.dropna(axis=0)
 theta_est_upper = theta_est_upper.groupby(0).first().reset_index()
-theta_est_upper = theta_est_upper.iloc[:100, 1:-1]
+theta_est_upper = theta_est_upper.iloc[:, 1:-1]
 theta_est_upper = np.asarray(theta_est_upper).astype(float)
 
 if small_plot:

@@ -92,19 +92,19 @@ for suffix in ['rank5', 'rank50', 'rank50_b1024']:
     theta_est = theta_est.dropna(axis=0)
     theta_est = theta_est.groupby(0).first().reset_index()
     theta_est = theta_est.iloc[:, :-1]
-    assert theta_est.shape[0] == 100
+    assert theta_est.shape[0] == 200
 
     theta_est_lower = pd.read_csv('./out/simulation/' + sim_name + '/probcox' + str(suffix) + '_theta_lower.txt', header=None, sep=';')
     theta_est_lower = theta_est_lower.dropna(axis=0)
     theta_est_lower = theta_est_lower.groupby(0).first().reset_index()
     theta_est_lower = theta_est_lower.iloc[:, :-1]
-    assert theta_est_lower.shape[0] == 100
+    assert theta_est_lower.shape[0] == 200
 
     theta_est_upper = pd.read_csv('./out/simulation/' + sim_name + '/probcox' + str(suffix) + '_theta_upper.txt', header=None, sep=';')
     theta_est_upper = theta_est_upper.dropna(axis=0)
     theta_est_upper = theta_est_upper.groupby(0).first().reset_index()
     theta_est_upper = theta_est_upper.iloc[:, :-1]
-    assert theta_est_upper.shape[0] == 100
+    assert theta_est_upper.shape[0] == 200
 
     theta_bound = theta_est_lower.merge(theta_est_upper, how='inner', on=0)
     theta_bound = theta_bound.merge(theta_est, how='inner', on=0)
@@ -141,8 +141,6 @@ for suffix in ['rank5', 'rank50', 'rank50_b1024']:
     pd.DataFrame(np.concatenate((np.round(np.mean(np.sum(np.sign(theta_est_lower[:, :]) == np.sign(theta_est_upper[:, :]), axis=1)))[None, None], np.round(np.sqrt(np.var(np.sum(np.sign(theta_est_lower[:, :]) == np.sign(theta_est_upper[:, :]), axis=1))))[None, None], np.round(np.mean(np.sum((np.sign(theta_est_lower[:, :]) == np.sign(theta_est_upper[:, :])) * np.squeeze(theta == 0)[None, :], axis=1)))[None, None]), axis=1)).to_csv('./out/simulation/tables/' + sim_name + '_ProbCox_main_add_' + suffix + '.csv')
 
 
-np.round(np.mean(np.sum(np.sign(theta_est_lower[:, :]) == np.sign(theta_est_upper[:, :]), axis=1)))[None, None]
-
 # R Cox
 # =======================================================================================================================
 for suffix in ['', '_1se']:
@@ -153,7 +151,7 @@ for suffix in ['', '_1se']:
     theta_est = theta_est.dropna(axis=0)
     theta_est = theta_est.groupby(0).first().reset_index()
     theta_est = np.asarray(theta_est.iloc[:, 1:])
-    assert theta_est.shape[0] == 100
+    assert theta_est.shape[0] == 200
 
 
     W = theta_est!=0 # non zero parameters estimates (based on HPD95%)
