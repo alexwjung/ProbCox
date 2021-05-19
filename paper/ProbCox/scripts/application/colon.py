@@ -95,10 +95,10 @@ print(ci)
 np.savetxt('./out/application/colon/concordance.txt', ci)
 np.savetxt('./out/application/colon/se.txt', torch.diag(pyro.get_param_store()['AutoMultivariateNormal.scale_tril']).detach().numpy())
 
-with open('./out/application/colon/theta_lower.txt', 'a') as write_out:
+with open('./out/application/colon/theta_lower.txt', 'w') as write_out:
     write_out.write(''.join([str(ii) + '; ' for ii in out['theta'][0].detach().numpy()[:, 0].tolist()]))
     write_out.write('\n')
-with open('./out/application/colon/theta.txt', 'a') as write_out:
+with open('./out/application/colon/theta.txt', 'w') as write_out:
     write_out.write(''.join([str(ii) + '; ' for ii in out['theta'][1].detach().numpy()[:, 0].tolist()]))
     write_out.write('\n')
 with open('./out/application/colon/theta_upper.txt', 'w') as write_out:
