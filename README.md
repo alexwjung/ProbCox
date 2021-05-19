@@ -1,6 +1,6 @@
 ![alt text](./docs/logo.png)
 
-# **Probabilistic Cox Regression for ScalableInference with Applications to ElectronicHealth Records**.
+# **Probabilistic Cox Regression for Scalable Inference with Applications to Electronic Health Records**.
 
 ## **Paper**
 [arXiv]()
@@ -18,9 +18,9 @@ $ pip install probcox
 The main folder for the accompanying paper as well as all the scripts for replication are found in [Paper](./paper/ProbCox).
 
 Some quick jupyter notebooks (Google Colab) to try out the module can be found in [Examples](./examples).
-- for a Colab link for a small scale simualtion open [Colab](https://colab.research.google.com/drive/1QiCWAAwFDey2LBshXzwBhn5sGeORzYlF?usp=sharing).
-- for a Colab link for a high-dimensional simualtion open [Colab](https://colab.research.google.com/drive/1XAGdms1hWoINLxeThyhD7V0AXY8b-Ixo?usp=sharing).
-- for a Colab link for a data example on the larynx data [R - KMsurv](https://cran.r-project.org/web/packages/KMsurv/KMsurv.pdf)  open [Colab](https://colab.research.google.com/drive/12TNil6y4Cyxb7hI6WVLdcDgAw9WA5QBl?usp=sharing).
+- Colab link for a small scale simualtion open [Colab](https://colab.research.google.com/drive/1QiCWAAwFDey2LBshXzwBhn5sGeORzYlF?usp=sharing).
+- Colab link for a high-dimensional simualtion open [Colab](https://colab.research.google.com/drive/1XAGdms1hWoINLxeThyhD7V0AXY8b-Ixo?usp=sharing).
+- Colab link for a data example on the larynx data [R - KMsurv](https://cran.r-project.org/web/packages/KMsurv/KMsurv.pdf)  open [Colab](https://colab.research.google.com/drive/12TNil6y4Cyxb7hI6WVLdcDgAw9WA5QBl?usp=sharing).
 
 The main scripts are found in [ProbCox](./src/probcox).
 

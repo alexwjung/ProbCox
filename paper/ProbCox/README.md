@@ -1,4 +1,4 @@
-# **Probabilistic Cox Regression for Scalable Inference with Applications to ElectronicHealth Records**.
+# **Probabilistic Cox Regression for Scalable Inference with Applications to Electronic Health Records**.
 
 ## **Paper**
 [arXiv]()
