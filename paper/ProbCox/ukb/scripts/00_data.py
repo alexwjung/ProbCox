@@ -7,6 +7,9 @@ Preparing the UKB data - cleaning and filtering
 - bring data into long format
 
 '''
+
+# Modules
+# =======================================================================================================================
 import os
 import shutil
 import sys
@@ -19,9 +22,12 @@ import torch
 
 ROOT_DIR = '/nfs/research1/gerstung/sds/sds-ukb-cancer/'
 
+# cluster variable
 run_id = int(sys.argv[1])
 print(run_id)
 
+
+# clear folders
 try:
     shutil.rmtree(ROOT_DIR + 'projects/ProbCox/data/prepared/train/event/' + str(run_id))
     shutil.rmtree(ROOT_DIR + 'projects/ProbCox/data/prepared/train/censored/' + str(run_id))
@@ -40,8 +46,8 @@ os.mkdir(ROOT_DIR + 'projects/ProbCox/data/prepared/test/event/' + str(run_id))
 os.mkdir(ROOT_DIR + 'projects/ProbCox/data/prepared/test/censored/' + str(run_id))
 
 
-# - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
+# Custom Functions
+# =======================================================================================================================
 def forward_fill(x):
     for ii in range(1, x.shape[0]):
         if np.sum(x[ii, :]) == 0:
@@ -57,10 +63,17 @@ def _mean(x):
     else:
         return('')
 
+
+
+# UKB IDS
+# =======================================================================================================================
 ukb_idx_remove = [1074413, 1220436, 1322418, 1373016, 1484804, 1516618, 1681957, 1898968, 2280037, 2326194, 2492542, 2672990, 2719152, 2753503, 3069616, 3100207, 3114030, 3622841, 3666774, 3683210, 4167470, 4285793, 4335116, 4426913, 4454074, 4463723, 4470984, 4735907, 4739147, 4940729, 5184071, 5938951]
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+
+
+# ICD10 Codes
+# =======================================================================================================================
 actionable_codes = ["I20 (angina pectoris)", "I21 (acute myocardial infarction)", "I22 (subsequent myocardial infarction)", "I23 (certain current complications following acute myocardial infarction)", "I24 (other acute ischaemic heart diseases)", "I25 (chronic ischaemic heart disease)", "I60 (subarachnoid haemorrhage)", "I61 (intracerebral haemorrhage)", "I62 (other nontraumatic intracranial haemorrhage)", "I63 (cerebral infarction)", "I64 (stroke, not specified as haemorrhage or infarction)", "I65 (occlusion and stenosis of precerebral arteries, not resulting in cerebral infarction)", "I66 (occlusion and stenosis of cerebral arteries, not resulting in cerebral infarction)", "I67 (other cerebrovascular diseases)", "I68 (cerebrovascular disorders in diseases classified elsewhere)", "I69 (sequelae of cerebrovascular disease)", "I46 (cardiac arrest)", "I50 (heart failure)", 'G45 (transient cerebral ischaemic attacks and related syndromes)']
 
 event_codes = ["I21 (acute myocardial infarction)", "I22 (subsequent myocardial infarction)", "I23 (certain current complications following acute myocardial infarction)", "I24 (other acute ischaemic heart diseases)"]
@@ -72,6 +85,10 @@ icd10_code_names = np.asarray(icd10_codes.loc[icd10_codes.iloc[:, 1].apply(lambd
 icd10_code_names.shape
 icd10_codes = icd10_codes.groupby(0).first()
 
+
+
+# Run
+# =======================================================================================================================
 data_iterator = pd.read_csv(ROOT_DIR + 'main/44968/ukb44968.csv', iterator=True, chunksize=1, nrows=1000, skiprows=lambda x: x in np.arange(1, 1000*run_id).tolist())
 
 for _, dd in tqdm.tqdm(enumerate(data_iterator)):
@@ -228,10 +245,8 @@ for _, dd in tqdm.tqdm(enumerate(data_iterator)):
     event = 0
     action = 0
 
-
     ll_events = []
     ll_actions = []
-
 
     # check if relevant codes are present
     for ii in range(len(d_codes)):
@@ -243,9 +258,10 @@ for _, dd in tqdm.tqdm(enumerate(data_iterator)):
             ll_events.append(d_dates[ii])
             event = 1
 
-    event_dates = np.asarray(ll_events).astype('datetime64[D]')
-    action_dates = np.asarray(ll_actions).astype('datetime64[D]')
+    event_dates = np.asarray(ll_events).astype('datetime64[D]') # with myocardial event
+    action_dates = np.asarray(ll_actions).astype('datetime64[D]') # other CVD events
 
+    # identifying relevant event dates and removing last year of observations
     if event:
         event_dates = np.min(event_dates)
         action_dates = np.min(action_dates)
@@ -275,14 +291,12 @@ for _, dd in tqdm.tqdm(enumerate(data_iterator)):
     d_codes = d_codes[idx]
 
     dates = np.concatenate((birthdate[None], assessment_dates, d_dates, EOO))
-
     baseline = np.concatenate((np.zeros((1, 10)).astype(float), baseline, np.zeros((d_dates.shape[0] + 1, 10)).astype(float)))
-    d_codes = np.concatenate((np.repeat('', 1 + assessment_dates.shape[0]), d_codes, np.repeat('', 1)))
+    d_codes = np.concatenate((np.repeat('', 1 + assessment_dates.shape[0]), d_codes, np.repeat('', 1))) # disease codes
     d_codes = (d_codes[:, None] == icd10_code_names).astype(int)
 
     idx_sort = np.argsort(dates)
     dates = dates[idx_sort]
-
     baseline = baseline[idx_sort, :]
     d_codes = d_codes[idx_sort, :]
 
@@ -296,8 +310,8 @@ for _, dd in tqdm.tqdm(enumerate(data_iterator)):
     baseline = forward_fill(baseline)
     X = np.concatenate((baseline, d_codes), axis=1)
 
+    # long format
     time_diff = (dates[1:] - dates[:-1]).astype(int)
-
     time = np.concatenate((np.cumsum(np.concatenate((np.asarray([0]), time_diff)))[:-1, None], np.cumsum(np.concatenate((np.asarray([0]), time_diff)))[1:, None]), axis=1)
     time = np.concatenate((time, np.zeros((time.shape[0], 1))),axis=1)
 
@@ -311,6 +325,7 @@ for _, dd in tqdm.tqdm(enumerate(data_iterator)):
            'X': torch.from_numpy(X),
            'date': np.min(assessment_dates)[None]}
 
+    # randomly wrtie to train/valid/test sets
     if np.random.binomial(1, 0.7, (1,)):
         if event:
             torch.save(data, ROOT_DIR + 'projects/ProbCox/data/prepared/train/event/' + str(run_id) + '/'+ str(eid[0]))
@@ -327,5 +342,5 @@ for _, dd in tqdm.tqdm(enumerate(data_iterator)):
         else:
             torch.save(data, ROOT_DIR + 'projects/ProbCox/data/prepared/valid/censored/' + str(run_id) + '/'+ str(eid[0]))
 
-            
+
 print('finished')

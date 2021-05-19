@@ -2,6 +2,9 @@
 Evaluating the predictive performance of the model
 '''
 
+# Modules
+# =======================================================================================================================
+
 import os
 import sys
 import glob
@@ -26,19 +29,23 @@ from pyro.optim import Adam
 from pyro.infer import SVI, Trace_ELBO
 from pyro.infer.mcmc import MCMC, NUTS
 
-import torch
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 
-from sklearn.metrics import roc_curve, auc
-from sklearn.metrics import roc_auc_score
-from sklearn.calibration import calibration_curve
+import probcox
 
-import matplotlib as mpl
-import matplotlib.pyplot as plt
+import warnings
+warnings.filterwarnings("ignore")
 
-# -----------------------------------------------------------------------------------------------------------------------------
+dtype = torch.FloatTensor
+
+np.random.seed(87)
+torch.manual_seed(34)
+
+ROOT_DIR = '/nfs/research1/gerstung/sds/sds-ukb-cancer/'
+
+
+# Plot Settings
+# =======================================================================================================================
 
 mpl.rcParams['axes.spines.right'] = False
 mpl.rcParams['axes.spines.top'] = False
@@ -49,30 +56,8 @@ plt.rcParams['font.size'] = 12
 plt.rcParams['axes.spines.top'] = False
 plt.rcParams['axes.spines.right'] = False
 
-# -----------------------------------------------------------------------------------------------------------------------------
-
-sys.path.append('/nfs/nobackup/gerstung/awj/projects/ProbCox/ProbCox/')
-
-import probcox as pcox
-importlib.reload(pcox)
-
-import simulation as sim
-importlib.reload(sim)
-
-# Setup
-# -----------------------------------------------------------------------------------------------------------------------------
-import warnings
-warnings.filterwarnings("ignore")
-
-dtype = torch.FloatTensor
-#dtype=torch.cuda.FloatTensor
-
-np.random.seed(87)
-torch.manual_seed(34)
-
-
-ROOT_DIR = '/nfs/research1/gerstung/sds/sds-ukb-cancer/'
-# -----------------------------------------------------------------------------------------------------------------------------
+# Plot
+# =======================================================================================================================
 
 landmarks = torch.load(ROOT_DIR + 'projects/ProbCox/output/landmark')
 

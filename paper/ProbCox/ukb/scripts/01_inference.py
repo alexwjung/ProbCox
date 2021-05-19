@@ -5,6 +5,8 @@ Main script for inference
 
 '''
 
+# Modules
+# =======================================================================================================================
 
 import os
 import sys
@@ -31,38 +33,20 @@ from pyro.optim import Adam
 from pyro.infer import SVI, Trace_ELBO
 from pyro.infer.mcmc import MCMC, NUTS
 
-import torch
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-
-
-# -----------------------------------------------------------------------------------------------------------------------------
-
-sys.path.append('/nfs/nobackup/gerstung/awj/projects/ProbCox/ProbCox/')
-
 import probcox as pcox
-importlib.reload(pcox)
 
-import simulation as sim
-importlib.reload(sim)
-
-# Setup
-# -----------------------------------------------------------------------------------------------------------------------------
 import warnings
 warnings.filterwarnings("ignore")
 
 dtype = torch.FloatTensor
-#dtype=torch.cuda.FloatTensor
 
 np.random.seed(87)
 torch.manual_seed(34)
 
 ROOT_DIR = '/nfs/research1/gerstung/sds/sds-ukb-cancer/'
 
-# Icd10 codes
-# -----------------------------------------------------------------------------------------------------------------------------
-
+# ICD10 Codes
+# =======================================================================================================================
 actionable_codes = ["I20 (angina pectoris)", "I21 (acute myocardial infarction)", "I22 (subsequent myocardial infarction)", "I23 (certain current complications following acute myocardial infarction)", "I24 (other acute ischaemic heart diseases)", "I25 (chronic ischaemic heart disease)", "I60 (subarachnoid haemorrhage)", "I61 (intracerebral haemorrhage)", "I62 (other nontraumatic intracranial haemorrhage)", "I63 (cerebral infarction)", "I64 (stroke, not specified as haemorrhage or infarction)", "I65 (occlusion and stenosis of precerebral arteries, not resulting in cerebral infarction)", "I66 (occlusion and stenosis of cerebral arteries, not resulting in cerebral infarction)", "I67 (other cerebrovascular diseases)", "I68 (cerebrovascular disorders in diseases classified elsewhere)", "I69 (sequelae of cerebrovascular disease)", "I46 (cardiac arrest)", "I50 (heart failure)", 'G45 (transient cerebral ischaemic attacks and related syndromes)']
 
 event_codes = ["I21 (acute myocardial infarction)", "I22 (subsequent myocardial infarction)", "I23 (certain current complications following acute myocardial infarction)", "I24 (other acute ischaemic heart diseases)"]
@@ -77,10 +61,8 @@ icd10_code_names.remove('I10 (essential (primary) hypertension)')
 icd10_code_names = np.asarray(icd10_code_names)
 icd10_codes = icd10_codes.groupby(0).first()
 
-
-# Dataloader Settings:
-# -----------------------------------------------------------------------------------------------------------------------------
-
+# Folder Locations
+# =======================================================================================================================
 train = glob.glob('/nfs/research1/gerstung/sds/sds-ukb-cancer/projects/ProbCox/data/prepared/train/**/*', recursive=True)
 ll = []
 for _ in range(len(train)):
@@ -117,8 +99,10 @@ for _ in range(len(test)):
         ll.append(False)
 test = np.asarray(test)[ll].tolist()
 
-len(train) + len(valid) + len(test)
+# Dataloader
+# =======================================================================================================================
 
+# custom functions for collating samples loaded and how to sample them (randomly)
 class RandomSampler(Sampler):
     def __init__(self, ids):
         self.ids_len = len(ids)
@@ -137,8 +121,9 @@ def custom_collate(batch):
     else:
         return(None, None)
 
+# dataloader object
 class UKB(Dataset):
-    """Face Landmarks dataset."""
+    """"""
     def __init__(self):
         """
         """
@@ -147,6 +132,7 @@ class UKB(Dataset):
         return(500)
 
     def __getitem__(self, ii, dtype=dtype):
+        # laod data and standardize variables
         d = torch.load(ii)
         time = d['time'].type(dtype)
         X = d['X'].type(dtype)
@@ -189,11 +175,12 @@ class UKB(Dataset):
 
         return(time, X)
 
+# define data laoder
 UKB_loader = UKB()
 dataloader = DataLoader(UKB_loader, batch_size=8192, num_workers=10, prefetch_factor=4, persistent_workers=True, collate_fn=custom_collate, sampler=RandomSampler(train), drop_last=True)
 
-# Inference:
-# 2048-----------------------------------------------------------------------------------------------------------------------------
+# Inference
+# =======================================================================================================================
 total_obs = len(train)
 total_events = len(train_e)
 batchsize = 8192
@@ -227,3 +214,5 @@ while run:
             torch.save(out, ROOT_DIR + 'projects/ProbCox/output/guide' )
             sample_mat = torch.cat([g.__call__()['theta'] for ii in range(100)], axis=1)
             torch.save(sample_mat.detach(), ROOT_DIR + 'projects/ProbCox/output/sample_mat')
+
+print('finished')

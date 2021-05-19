@@ -1,6 +1,9 @@
 '''
-landmark prediction of 10 year myocardial risk - at 01/01/2010
+landmark prediction of 10 year myocardial risk - at 01/01/2010 - additional
 '''
+
+# Modules
+# =======================================================================================================================
 
 import os
 import sys
@@ -26,36 +29,22 @@ from pyro.optim import Adam
 from pyro.infer import SVI, Trace_ELBO
 from pyro.infer.mcmc import MCMC, NUTS
 
-import torch
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 
-# -----------------------------------------------------------------------------------------------------------------------------
+import probcox
 
-sys.path.append('/nfs/nobackup/gerstung/awj/projects/ProbCox/ProbCox/')
-
-import probcox as pcox
-importlib.reload(pcox)
-
-import simulation as sim
-importlib.reload(sim)
-
-# Setup
-# -----------------------------------------------------------------------------------------------------------------------------
 import warnings
 warnings.filterwarnings("ignore")
 
 dtype = torch.FloatTensor
-#dtype=torch.cuda.FloatTensor
 
 np.random.seed(87)
 torch.manual_seed(34)
 
 ROOT_DIR = '/nfs/research1/gerstung/sds/sds-ukb-cancer/'
 
-# Icd10 codes
-# -----------------------------------------------------------------------------------------------------------------------------
+# ICD10 Codes
+# =======================================================================================================================
 
 actionable_codes = ["I20 (angina pectoris)", "I21 (acute myocardial infarction)", "I22 (subsequent myocardial infarction)", "I23 (certain current complications following acute myocardial infarction)", "I24 (other acute ischaemic heart diseases)", "I25 (chronic ischaemic heart disease)", "I60 (subarachnoid haemorrhage)", "I61 (intracerebral haemorrhage)", "I62 (other nontraumatic intracranial haemorrhage)", "I63 (cerebral infarction)", "I64 (stroke, not specified as haemorrhage or infarction)", "I65 (occlusion and stenosis of precerebral arteries, not resulting in cerebral infarction)", "I66 (occlusion and stenosis of cerebral arteries, not resulting in cerebral infarction)", "I67 (other cerebrovascular diseases)", "I68 (cerebrovascular disorders in diseases classified elsewhere)", "I69 (sequelae of cerebrovascular disease)", "I46 (cardiac arrest)", "I50 (heart failure)", 'G45 (transient cerebral ischaemic attacks and related syndromes)']
 
@@ -73,7 +62,7 @@ icd10_codes = icd10_codes.groupby(0).first()
 
 
 # Dataloader Settings:
-# -----------------------------------------------------------------------------------------------------------------------------
+# =======================================================================================================================
 
 train = glob.glob('/nfs/research1/gerstung/sds/sds-ukb-cancer/projects/ProbCox/data/prepared/train/**/*', recursive=True)
 ll = []
@@ -213,7 +202,7 @@ breslow = torch.load(ROOT_DIR + 'projects/ProbCox/output/Breslow')
 UKB_loader = UKB(breslow=breslow, theta=out['theta'][1].detach())
 
 # Predictions
-# -----------------------------------------------------------------------------------------------------------------------------
+# =======================================================================================================================
 dataloader = DataLoader(UKB_loader, batch_size=500, num_workers=8, prefetch_factor=1, persistent_workers=True, sampler=RandomSampler(train), drop_last=False, collate_fn=custom_collate)
 res_train = np.zeros((0, 3))
 for _, __input__ in tqdm.tqdm(enumerate(dataloader)):
