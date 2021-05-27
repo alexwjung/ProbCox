@@ -1,10 +1,10 @@
-# **Probabilistic Cox Regression for Scalable Inference with Applications to Electronic Health Records**.
+# **Bayesian Cox Regression for Population-scale Inference in Electronic Health Records**.
 
 ## **Paper**
 [arXiv]()
 
 ## **Description**
-The Cox model has been an indispensable tool for much of applied biomedical research. However, the sector went through a profound transformation, generating data at an unprecedented scale, opening new frontiers in the way we can study and understand diseases. With the wealth of data collect, new challenges for statistical inference arise, as data sets are often high dimensional, exhibit an increasing number of measurements at irregularly spaced time points, and are simply too large to fit in memory. Many current implementations for time-to-event analysis are ill-suited for these problems as inference is computationally intensive and often requires access to the full data at once. We propose a Bayesian version of Cox's partial likelihood, based on a counting process representation. In combination with a variational objective for inference and a re-weighting of the log-likelihood, we can obtain an approximation for the posterior distribution, that can be factorized over subsamples of the data. Our approach enables the inclusion of time-varying covariates with viable uncertainty estimates for large-scale and high-dimensional data sets. We show the utility of our method through a simulation study and an application to myocardial infarction in the UK Biobank.
+The Cox model is an indispensable tool for time-to-event analysis, particularly in biomedical research. However, medicine undergoing a profound transformation, generating data at an unprecedented scale, opens new frontiers to study and understand diseases. With the wealth of data collected, new challenges for statistical inference arise, as data sets are often high dimensional, exhibit an increasing number of measurements at irregularly spaced time points, and are simply too large to fit in memory. Many current implementations for time-to-event analysis are ill-suited for these problems as inference is computationally intensive and often requires access to the full data at once. We propose a Bayesian version for the counting process representation of Cox's partial likelihood. Combining a variational objective and a re-weighting of the log-likelihood, we obtain an approximation for the posterior distribution that factorizes over subsamples of the data to enable stochastic variational inference. Our approach enables the inclusion of time-varying covariates with viable uncertainty estimates for large-scale and high-dimensional data sets. We show the utility of our method through a simulation study and an application to myocardial infarction in the UK Biobank.
 
 The code is fully written in pytorch/pyro and numpy.
 
@@ -78,9 +78,9 @@ Approximate time needed to reproduce the analyses on a standard desktop machine:
 1-8 hours
 
 ### Additional information
-- Rerunning all the simulations on a single desktop machine will take a considered amount of time. We therefore provide individual simualtion runs (choosen by demand) that can be checked/compared to the results provided on https://github.com/alexwjung/ProbCox.
+- Rerunning all the simulations on a single desktop machine will take a considered amount of time. We therefore provide individual simulation runs (chosen by demand) that can be checked/compared to the results provided on https://github.com/alexwjung/ProbCox.
 
-- The simulation results for the high-dimensional case can suffer from numerical instabilities, this happens for the the particular prior specification of student(nu=1, s=0.001). With s > 0.01 we find the result to stabalize much better, however, there is also a stonger regularization applied.
+- The simulation results for the high-dimensional case can suffer from numerical instabilities, this happens for the the particular prior specification of student(nu=1, s=0.001). With s > 0.01 we find the result to stabilize much better, however, there is also a stronger regularization applied.
 Our replication results are not exact, however, differences are marginal and the overall result are the same.
 
 - The fake simulation for the UKB data needs to write ~2GB of data. In the colab notebooks this would need to be written to the google drive.
