@@ -1,5 +1,3 @@
-![alt text](./docs/logo.png)
-
 # **Bayesian Cox Regression for Population-scale Inference in Electronic Health Records**.
 
 ## **Paper**
