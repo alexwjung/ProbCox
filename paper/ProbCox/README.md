@@ -33,7 +33,7 @@ The original scripts/data/outputs from the analysis are in the following folders
 - Information on the installed packages, the Author Contributions Checklist, and other relevant documents are found in [Docs](./docs)
 - Most of the outputs and raw files, like estimates, tables, figures etc. are found in [Out](./out)
 - A dedicated folder with the relevant outputs for the paper can be found in [Paper](./paper)
-- The scripts used to run the analysis is found in [Scripts](./scripts)
+- The scripts used to run the analysis are found in [Scripts](./scripts)
 - A dedicated folder for the analysis of the UKB data with subfolder [output](./ukb/out) and [scripts](./ukb/scripts) can be found in [UKB-Analysis](./ukb)
 
 Notebooks for easy replication of the analysis can be found in [Replication](./replication)
