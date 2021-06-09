@@ -20,7 +20,10 @@ These include:
 - Colon are data on trials of adjuvant chemotherapy for colon cancer,  [@laurie_surgical_1989].
 - Lung are data extracted from the North Central Cancer Treatment Group on mortality for advanced lung cancer [@loprinzi_prospective_1994].
 - NAFLD is a large population-based study investigating non-alcoholic fatty liver disease (NAFLD) [@allen_nonalcoholic_2018].
-- Heart investigates mortality in patients from the Stanford heart transplant program [@crowley_covariance_1977]
+- Heart investigates mortality in patients from the Stanford heart transplant program [@crowley_covariance_1977].
+- PBCseq are follow-up laboratory data
+from the Mayo clinical trial on primary biliary cholangitis and D-penicillamine treatment
+conducted between 1974 and 1984 [@incollectiontherneau_cox_2000].
 The purpose of these examples is to evaluate the performance of our proposed method in comparison to the frequentist Cox model on real world applications.
 
 Furthermore, we used the UK Biobank [@sudlow_uk_2015] to study the association of standard risk factors and comorbidities, taken from the electronic health records, with the occurrence of myocardial infarction.
