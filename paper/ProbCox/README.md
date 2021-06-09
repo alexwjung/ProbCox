@@ -46,6 +46,7 @@ Link to the .ipynb files - link to a specific colab session
     - [Lung](./replication/application/lung.ipynb) - [Colab](https://colab.research.google.com/drive/1IniSnT1bUINtUnu_owezJ0FWeKyXWgvu?usp=sharing)
     - [Heart](./replication/application/heart.ipynb) - [Colab](https://colab.research.google.com/drive/1bXWSxZA4KvRvxi5xZswDPbdIEaPTrljv?usp=sharing)
     - [Nafld](./replication/application/nafld.ipynb) - [Colab](https://colab.research.google.com/drive/13IJLUfXSqF_3U9dsEBuvo-Vy29r7WLzn?usp=sharing)
+    - [PBCseq](./replication/application/pbcseq.ipynb) - [Colab](https://colab.research.google.com/drive/15Y9XK5YlldRgpha7D0aT9eMmpMN_JxLu?usp=sharing)
 
 - Replication notebooks for the simulations are in [Replicate Simulations](./replication/simulations)
     - [Standard Case 1](./replication/simulation/standard_case1.ipynb) - [Colab](https://colab.research.google.com/drive/1iEoO9hHkgRWzaLhbU9VYhYk6U6V8nffG?usp=sharing)

@@ -40,7 +40,8 @@ np.random.seed(5256)
 torch.manual_seed(9235)
 
 
-os.chdir('/nfs/nobackup/gerstung/awj/projects/ProbCox/')
+#os.chdir('/nfs/nobackup/gerstung/awj/projects/ProbCox/')
+os.chdir('/Users/alexwjung/projects/ProbCox/paper/ProbCox/')
 
 # Funtion
 # =======================================================================================================================
@@ -144,7 +145,7 @@ ax[0].set_ylim([-2, 2])
 ax[0].set_xticks([-2, 0, 2])
 ax[0].set_xlim([-2, 2])
 ax[0].plot(ax[0].get_xlim(), ax[0].get_ylim(), ls=':', color='black', linewidth=0.5)
-ax[0].set_title(r'ProbCox', fontsize=10)
+ax[0].set_title(r'ProbCox - Rank: 50 \& Batch size 1024', fontsize=10)
 
 
 # glmnet
@@ -176,6 +177,6 @@ ax[1].set_xticks([-2, 0, 2])
 ax[1].set_xlim([-2, 2])
 ax[1].plot(ax[1].get_xlim(), ax[1].get_ylim(), ls=':', color='black', linewidth=0.5)
 ax[0].legend(frameon=False, prop={'size': 8}, loc='lower right')
-ax[1].set_title(r'glmnet', fontsize=10)
+ax[1].set_title(r'R-glmnet - $\lambda_{1se}$', fontsize=10)
 
 plt.savefig('./out/simulation/figures/hd.eps', bbox_inches='tight', dpi=600)
