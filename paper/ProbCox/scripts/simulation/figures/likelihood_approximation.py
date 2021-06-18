@@ -108,7 +108,7 @@ for _ in tqdm.tqdm(range(10000)):
     m_approx.append(pcox.CoxPartialLikelihood(pred=pred[idx], sampling_proportion=[total_obs, batchsize, total_events, torch.sum(surv[idx, -1])]).log_prob(surv=surv[idx]).detach().numpy())
     m_approx_naive.append(pcox.CoxPartialLikelihood(pred=pred[idx], sampling_proportion=None).log_prob(surv=surv[idx]).detach().numpy() * (total_obs/batchsize))
 
-# Plot
+# Plots
 # =======================================================================================================================
 
 fig, ax = plt.subplots(1, 2, figsize=(8.27*0.90, 11.69/4), dpi=600, sharey=True)
@@ -125,7 +125,7 @@ ax[0].set_ylabel(r'$-\log \mathcal{L}(D|\theta)$')
 ax[0].set_xticks([0, 2500, 5000])
 ax[0].set_xlim([0, 5000])
 
-ax[1].hist(-np.asarray(m_approx), bins=50, alpha=1, color='0.5', density=True, orientation='horizontal', label='re-weighted')
+ax[1].hist(-np.asarray(m_approx), bins=50, alpha=1, color='0.5', density=True, orientation='horizontal', label='reweighted')
 ax[1].hist(-np.asarray(m_approx_naive), bins=50, alpha=1, color='0.8', density=True, orientation='horizontal', label='naive')
 ax[1].axhline(-m_est, color='0.1', label='full')
 ax[1].spines['bottom'].set_visible(False)

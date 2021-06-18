@@ -4,7 +4,10 @@
 [arXiv]()
 
 ## **Description**
-The Cox model is an indispensable tool for time-to-event analysis, particularly in biomedical research. However, medicine undergoing a profound transformation, generating data at an unprecedented scale, opens new frontiers to study and understand diseases. With the wealth of data collected, new challenges for statistical inference arise, as data sets are often high dimensional, exhibit an increasing number of measurements at irregularly spaced time points, and are simply too large to fit in memory. Many current implementations for time-to-event analysis are ill-suited for these problems as inference is computationally intensive and often requires access to the full data at once. We propose a Bayesian version for the counting process representation of Cox's partial likelihood. Combining a variational objective and a re-weighting of the log-likelihood, we obtain an approximation for the posterior distribution that factorizes over subsamples of the data to enable stochastic variational inference. Our approach enables the inclusion of time-varying covariates with viable uncertainty estimates for large-scale and high-dimensional data sets. We show the utility of our method through a simulation study and an application to myocardial infarction in the UK Biobank.
+The Cox model is an indispensable tool for time-to-event analysis, particularly in biomedical research. However, medicine is undergoing a profound transformation, generating data at an unprecedented scale, which opens new frontiers to study and understand diseases. With the wealth of data collected, new challenges for statistical inference arise, as datasets are often high dimensional, exhibit an increasing number of measurements at irregularly spaced time points, and are simply too large to fit in memory. Many current implementations for time-to-event analysis are ill-suited for these problems as inference is computationally demanding and requires access to the full data at once.
+Here we propose a Bayesian version for the counting process representation of Cox's partial likelihood for efficient inference on large-scale datasets with millions of data points and thousands of time-dependent covariates. Through the combination of stochastic variational inference and a reweighting of the log-likelihood, we obtain an approximation for the posterior distribution that factorizes over subsamples of the data, enabling the analysis in big data settings.
+Crucially, the method produces viable uncertainty estimates for large-scale and high-dimensional datasets.
+We show the utility of our method through a simulation study and an application to myocardial infarction in the UK Biobank.
 
 The code is fully written in pytorch/pyro and numpy.
 
@@ -21,15 +24,13 @@ These include:
 - Lung are data extracted from the North Central Cancer Treatment Group on mortality for advanced lung cancer [@loprinzi_prospective_1994].
 - NAFLD is a large population-based study investigating non-alcoholic fatty liver disease (NAFLD) [@allen_nonalcoholic_2018].
 - Heart investigates mortality in patients from the Stanford heart transplant program [@crowley_covariance_1977].
-- PBCseq are follow-up laboratory data
-from the Mayo clinical trial on primary biliary cholangitis and D-penicillamine treatment
-conducted between 1974 and 1984 [@incollectiontherneau_cox_2000].
+- PBCseq are follow-up laboratory data from the Mayo clinical trial on primary biliary cholangitis and D-penicillamine treatment [@incollectiontherneau_cox_2000].
 The purpose of these examples is to evaluate the performance of our proposed method in comparison to the frequentist Cox model on real world applications.
 
 Furthermore, we used the UK Biobank [@sudlow_uk_2015] to study the association of standard risk factors and comorbidities, taken from the electronic health records, with the occurrence of myocardial infarction.
 The UK Biobank (UKB) is a large-scale biomedical database established in 2006. In total there are 502628 participants, recruited between 2006 and 2010. All participants were between 40-69 years of age at their recruitment date.  For details of the analysis see section 4 of the paper.
 
-We provide an algorithm to efficiently simulate survival times with time-varying covariates that resemble disease association studies in electronic health records. In total we run two standard case simulations N >> P and a high-dimensional case P >> N. for details of the simulations see section 3 of the paper.
+We provide an algorithm to efficiently simulate event times with time-varying covariates that resemble disease association studies in electronic health records. In total we run two standard case simulations N >> P and a high-dimensional case P >> N. For details of the simulations see section 3 of the paper.
 
 The original scripts/data/outputs from the analysis are in the following folders:
 - The accompanying data can be found in [Data](./data)
@@ -55,21 +56,24 @@ Link to the .ipynb files - link to a specific colab session
     - [Standard Case 1](./replication/simulation/standard_case1.ipynb) - [Colab](https://colab.research.google.com/drive/1iEoO9hHkgRWzaLhbU9VYhYk6U6V8nffG?usp=sharing)
     - [Standard Case 2](./replication/simulation/standard_case2.ipynb) - [Colab](https://colab.research.google.com/drive/1lIm7d866QtbIxqY6IRhIFrfTECLBWSDn?usp=sharing)
     - [High-dimensional Case](./replication/simulation/highdimensional_case.ipynb) - [Colab](https://colab.research.google.com/drive/1Db9x78fYhhj5yVTalMhKsP6wOm9tArKr?usp=sharing)
+    - [Resources](./replication/simulation/resources.ipynb) - [Colab](https://colab.research.google.com/drive/1BWSuWMOFgxPveoWgb7AfX7DuPl6n1ZeV?usp=sharing)
 
 - To replicate the tables presented in the paper go to [Replicate Tables](./replication/tables)
     - [Data Example](./replication/simulation/tables/data_example.ipynb) - [Colab](https://colab.research.google.com/drive/1yHM5iDRE0GqTsj7Jpql32PjpNJaopSJX?usp=sharing)
     - [Likelihood Approximation](./replication/simulation/tables/likelihood_approx.ipynb) - [Colab](https://colab.research.google.com/drive/1HJeGSiSX6_plwbgJleY4RjYFa13Gm2O-?usp=sharing)
     - [Likelihood Approximation - large P](./replication/simulation/tables/likelihood_approx_additional1.ipynb) - [Colab](https://colab.research.google.com/drive/1USX1g8PmHkm6Di1WiwAV0u9nJdZ1JtPw?usp=sharing)
-    - [Likelihood Approximation- large LP](./replication/simulation/tables/likelihood_approx_additional2.ipynb) - [Colab](https://colab.research.google.com/drive/1Kx2y_E4aSLx6AG0rlQd3pKDJ2F6HR-_f?usp=sharing)
+    - [Likelihood Approximation - predictor](./replication/simulation/tables/likelihood_approx_additional2.ipynb) - [Colab](https://colab.research.google.com/drive/1Kx2y_E4aSLx6AG0rlQd3pKDJ2F6HR-_f?usp=sharing)
     - [Standard Case 1](./replication/simulation/tables/standard_case1_table.ipynb) - [Colab](https://colab.research.google.com/drive/11XX0E36TUTNnTFhEeW-It7YIm-5vKc4q?usp=sharing)
     - [Standard Case 2](./replication/simulation/tables/standard_case2_table.ipynb) - [Colab](https://colab.research.google.com/drive/13Pt2tMoJAKkgpU-L9KmqWj-tgsgQNBaz?usp=sharing)
     - [High-dimensional Case](./replication/simulation/tables/highdimensional_case_table.ipynb) - [Colab](https://colab.research.google.com/drive/1Uj6lQaivKj7UaEgR-j5feZgXFhXke0R1?usp=sharing)
 
 - To replicate the figures presented in the paper go to [Replicate Figures](./replication/figures)
     - [Schematic](./replication/simulation/figures/schematic.ipynb) - [Colab](https://colab.research.google.com/drive/1Hz1IG6z4fOJBTNEIM6jSnyO6l586P3G1?usp=sharing)
-    - [Likelihood Approximation over training](./replication/simulation/figures/likelihood_training.ipynb) - [Colab](https://colab.research.google.com/drive/1kz42UvTAag7XxEWCgMhw6GidP_fuwW4p?usp=sharing)
+    - [Likelihood Approximation](./replication/simulation/figures/likelihood_training.ipynb) - [Colab](https://colab.research.google.com/drive/1kz42UvTAag7XxEWCgMhw6GidP_fuwW4p?usp=sharing)
     - [High-dimensional](./replication/simulation/figures/hd.ipynb) - [Colab](https://colab.research.google.com/drive/1i_NbMRESZTNSHsqRlnRu0GuPA658UT9W?usp=sharing)
-    - [Baseline Hazard](./replication/simulation/figures/) - [Colab](https://colab.research.google.com/drive/1PDp2G-ob1tjIlnh03j9TyoH7QlxDuGYM?usp=sharing)
+    - [Resource Comparison](./replication/simulation/figures/resource.ipynb) - [Colab](https://colab.research.google.com/drive/1MAf9qRDnYtG9XnW-GzVzyldVtMk-qlC2?usp=sharing)
+    - [Additional Predictor](./replication/simulation/figures/lp.ipynb) - [Colab](https://colab.research.google.com/drive/1pfteqvgAbetdgRIWjoExQRYpYfT4x-q4?usp=sharing)
+    - [Baseline Hazard](./replication/simulation/figures/baseline_hazard.ipynb) - [Colab](https://colab.research.google.com/drive/1PDp2G-ob1tjIlnh03j9TyoH7QlxDuGYM?usp=sharing)
 
 - To replicate a similar analysis as in the UKB go to [Replicate Fake UKB](./replication/ukb)
     - [Fake Data Generation](./replication/ukb/00_fakedata.ipynb) - [Colab](https://colab.research.google.com/drive/1wT4pw2WEk6npzx7lrSaOjo5JUwTEfVXr?usp=sharing)
@@ -77,7 +81,6 @@ Link to the .ipynb files - link to a specific colab session
 
 
 ### Expected run-time
-
 Approximate time needed to reproduce the analyses on a standard desktop machine:
 1-8 hours
 

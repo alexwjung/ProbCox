@@ -1,0 +1,79 @@
+
+R version 4.0.3 (2020-10-10) -- "Bunny-Wunnies Freak Out"
+Copyright (C) 2020 The R Foundation for Statistical Computing
+Platform: x86_64-conda-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> rm(list=ls())
+> library(survival)
+> library(glmnet)
+Loading required package: Matrix
+Loaded glmnet 4.1-1
+> set.seed(7)
+> rd = read.csv('/nfs/nobackup/gerstung/awj/projects/ProbCox/compute/data/I2000_P400.csv')
+> print(dim(rd))
+[1] 15600   403
+> ptm <- proc.time()
+> m = coxph(Surv(V1, V2, V3)~., data=rd)
+> print(proc.time() - ptm)
+   user  system elapsed 
+ 29.972   0.243  30.187 
+> print(concordance(m))
+Call:
+concordance.coxph(object = m)
+
+n= 15600 
+Concordance= 0.8559 se= 0.01096
+concordant discordant     tied.x     tied.y    tied.xy 
+    257454      42681       1606          4          0 
+> 
+
+------------------------------------------------------------
+Sender: LSF System <lsf@hx-noah-07-14>
+Subject: Job 9855515: <./rsurvival.sh> in cluster <EBI> Done
+
+Job <./rsurvival.sh> was submitted from host <noah-login-01> by user <alexwjung> in cluster <EBI> at Fri Jun 11 12:35:34 2021
+Job was executed on host(s) <4*hx-noah-07-14>, in queue <research-rh74>, as user <alexwjung> in cluster <EBI> at Fri Jun 11 12:35:34 2021
+</homes/alexwjung> was used as the home directory.
+</nfs/nobackup/gerstung/awj/projects/ProbCox/compute/scripts> was used as the working directory.
+Started at Fri Jun 11 12:35:34 2021
+Terminated at Fri Jun 11 12:36:16 2021
+Results reported at Fri Jun 11 12:36:16 2021
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+./rsurvival.sh
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   41.28 sec.
+    Max Memory :                                 544 MB
+    Average Memory :                             256.00 MB
+    Total Requested Memory :                     16000.00 MB
+    Delta Memory :                               15456.00 MB
+    Max Swap :                                   1364 MB
+    Max Processes :                              4
+    Max Threads :                                5
+    Run time :                                   42 sec.
+    Turnaround time :                            42 sec.
+
+The output (if any) is above this job summary.
+

@@ -145,7 +145,7 @@ ax[0].set_ylim([-2, 2])
 ax[0].set_xticks([-2, 0, 2])
 ax[0].set_xlim([-2, 2])
 ax[0].plot(ax[0].get_xlim(), ax[0].get_ylim(), ls=':', color='black', linewidth=0.5)
-ax[0].set_title(r'ProbCox - Rank: 50 \& Batch size 1024', fontsize=10)
+ax[0].set_title(r'ProbCox - Rank: 50 \& Batch size: 1024', fontsize=10)
 
 
 # glmnet

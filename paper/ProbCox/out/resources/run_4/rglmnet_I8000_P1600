@@ -1,0 +1,72 @@
+
+R version 4.0.3 (2020-10-10) -- "Bunny-Wunnies Freak Out"
+Copyright (C) 2020 The R Foundation for Statistical Computing
+Platform: x86_64-conda-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> rm(list=ls())
+> library(survival)
+> library(glmnet)
+Loading required package: Matrix
+Loaded glmnet 4.1-1
+> set.seed(7)
+> rd = read.csv('/nfs/nobackup/gerstung/awj/projects/ProbCox/compute/data/I8000_P1600.csv')
+> print(dim(rd))
+[1] 61710  1603
+> ptm <- proc.time()
+> m <- glmnet(as.matrix(rd[, 4:dim(rd)[2]]), Surv(rd$V1, rd$V2, rd$V3), family ="cox")
+> print(proc.time() - ptm)
+   user  system elapsed 
+561.319 401.946 793.309 
+> 
+> 
+
+------------------------------------------------------------
+Sender: LSF System <lsf@hx-noah-12-03>
+Subject: Job 9863390: <./rglmnet.sh> in cluster <EBI> Done
+
+Job <./rglmnet.sh> was submitted from host <noah-login-01> by user <alexwjung> in cluster <EBI> at Fri Jun 11 13:01:09 2021
+Job was executed on host(s) <4*hx-noah-12-03>, in queue <research-rh74>, as user <alexwjung> in cluster <EBI> at Fri Jun 11 13:01:09 2021
+</homes/alexwjung> was used as the home directory.
+</nfs/nobackup/gerstung/awj/projects/ProbCox/compute/scripts> was used as the working directory.
+Started at Fri Jun 11 13:01:09 2021
+Terminated at Fri Jun 11 13:17:47 2021
+Results reported at Fri Jun 11 13:17:47 2021
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+./rglmnet.sh
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   1167.61 sec.
+    Max Memory :                                 8573 MB
+    Average Memory :                             6307.67 MB
+    Total Requested Memory :                     16000.00 MB
+    Delta Memory :                               7427.00 MB
+    Max Swap :                                   9522 MB
+    Max Processes :                              4
+    Max Threads :                                8
+    Run time :                                   998 sec.
+    Turnaround time :                            998 sec.
+
+The output (if any) is above this job summary.
+

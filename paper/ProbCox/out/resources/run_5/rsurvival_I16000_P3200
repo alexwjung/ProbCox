@@ -1,0 +1,78 @@
+
+R version 4.0.3 (2020-10-10) -- "Bunny-Wunnies Freak Out"
+Copyright (C) 2020 The R Foundation for Statistical Computing
+Platform: x86_64-conda-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> rm(list=ls())
+> library(survival)
+> library(glmnet)
+Loading required package: Matrix
+Loaded glmnet 4.1-1
+> set.seed(7)
+> rd = read.csv('/nfs/nobackup/gerstung/awj/projects/ProbCox/compute/data/I16000_P3200.csv')
+> ptm <- proc.time()
+> m = coxph(Surv(V1, V2, V3)~., data=rd)
+> print(proc.time() - ptm)
+     user    system   elapsed 
+39346.096  1002.259 40444.321 
+> 
+> 
+> P3200.txt', quote="\"", comment.char="")
++ ptm <- proc.time()
++ m = coxph(Surv(V1, V2, V3)~., data=rd)
++ print(proc.time() - ptm)
++ 
++ print(mean(abs(as.numeric(unlist(theta)) - as.numeric(coef(m)))))
++ Error: unexpected end of input
+Execution halted
+
+------------------------------------------------------------
+Sender: LSF System <lsf@hx-noah-07-13>
+Subject: Job 9638110: <./rsurvival.sh> in cluster <EBI> Exited
+
+Job <./rsurvival.sh> was submitted from host <noah-login-01> by user <alexwjung> in cluster <EBI> at Thu Jun 10 19:41:18 2021
+Job was executed on host(s) <4*hx-noah-07-13>, in queue <research-rh74>, as user <alexwjung> in cluster <EBI> at Thu Jun 10 20:06:10 2021
+</homes/alexwjung> was used as the home directory.
+</nfs/nobackup/gerstung/awj/projects/ProbCox/compute/scripts> was used as the working directory.
+Started at Thu Jun 10 20:06:10 2021
+Terminated at Fri Jun 11 07:33:33 2021
+Results reported at Fri Jun 11 07:33:33 2021
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+./rsurvival.sh
+------------------------------------------------------------
+
+Exited with exit code 1.
+
+Resource usage summary:
+
+    CPU time :                                   41163.09 sec.
+    Max Memory :                                 21507 MB
+    Average Memory :                             20535.43 MB
+    Total Requested Memory :                     64000.00 MB
+    Delta Memory :                               42493.00 MB
+    Max Swap :                                   24575 MB
+    Max Processes :                              4
+    Max Threads :                                8
+    Run time :                                   41243 sec.
+    Turnaround time :                            42735 sec.
+
+The output (if any) is above this job summary.
+

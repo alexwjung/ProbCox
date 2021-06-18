@@ -11,7 +11,6 @@ import glob
 import subprocess
 import tqdm
 import importlib
-os.chdir('/nfs/research1/gerstung/sds/sds-ukb-cancer/projects/ProbCox/')
 
 import pandas as pd
 import numpy as np
@@ -30,6 +29,7 @@ from pyro.infer import SVI, Trace_ELBO
 from pyro.infer.mcmc import MCMC, NUTS
 
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 
 import probcox
 
@@ -40,9 +40,6 @@ dtype = torch.FloatTensor
 
 np.random.seed(87)
 torch.manual_seed(34)
-
-ROOT_DIR = '/nfs/research1/gerstung/sds/sds-ukb-cancer/'
-
 
 # Plot settings
 # =======================================================================================================================
@@ -63,7 +60,7 @@ actionable_codes = ["I20 (angina pectoris)", "I21 (acute myocardial infarction)"
 
 event_codes = ["I21 (acute myocardial infarction)", "I22 (subsequent myocardial infarction)", "I23 (certain current complications following acute myocardial infarction)", "I24 (other acute ischaemic heart diseases)"]
 
-icd10_codes = pd.read_csv(ROOT_DIR + 'projects/ProbCox/data/icd10_codes.csv', header=None)
+icd10_codes = pd.read_csv('/Users/alexwjung/projects/ProbCox/paper/ProbCox/docs/icd10_codes.csv', header=None)
 icd10_codes
 icd10_codes.iloc[:, 1] = icd10_codes.iloc[:, 1].apply(lambda x: x[20:])
 icd10_code_names = np.asarray(icd10_codes.loc[icd10_codes.iloc[:, 1].apply(lambda x: x not in actionable_codes), 1])
@@ -79,7 +76,7 @@ baseline_names = np.asarray(['Sex', 'Alcohol', 'Smoking', 'LDL', 'HDL', 'Triglyc
 
 # Plot
 # =======================================================================================================================
-out = torch.load(ROOT_DIR + 'projects/ProbCox/output/guide')
+out = torch.load('/Users/alexwjung/projects/ProbCox/paper/ProbCox/ukb/output/guide')
 
 fig, ax = plt.subplots(2, 1, figsize=(8.27, 11.69), dpi=300, sharex=True, gridspec_kw={'height_ratios': [1, 1]})
 fig.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=None, hspace=0.0)
@@ -104,7 +101,7 @@ ax0.set_yticklabels([str(np.round(theta[:13][idx_base][ii][0],2)) + ' (' +  str(
 sign = np.sign(out['theta'][0].detach().numpy()[13:]) == np.sign(out['theta'][2].detach().numpy()[13:])
 sign = np.logical_and(sign, np.abs(out['theta'][1].detach().numpy()[13:]) > 0.05)
 sign = np.logical_and(sign, np.abs(out['theta'][0].detach().numpy()[13:]) != 0)
-sign = np.logical_and(sign, np.abs(out['theta'][2].detach().numpy()[13:]) != 0)
+sign = np.logical_and(sign, np.abs(out['theta'][2].detach().numpy()[13:]) != 0)s
 
 theta_lower = theta_lower[13:][sign]
 theta = theta[13:][sign]
@@ -128,6 +125,5 @@ ax1.set_xlim([0, 4])
 ax1.set_xlabel(r'$exp[\theta$]')
 ax[1].set_xlabel(r'$exp[\theta$]')
 
-#plt.show()
-#plt.close()
-plt.savefig(ROOT_DIR + 'projects/ProbCox/output/forest_plot.eps', bbox_inches='tight')
+plt.show()
+plt.close()

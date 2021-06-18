@@ -1,0 +1,39 @@
+(256, 3200)
+1219.504546880722
+
+------------------------------------------------------------
+Sender: LSF System <lsf@hx-noah-08-09>
+Subject: Job 9871461: <./probh5.sh> in cluster <EBI> Done
+
+Job <./probh5.sh> was submitted from host <noah-login-01> by user <alexwjung> in cluster <EBI> at Fri Jun 11 13:49:56 2021
+Job was executed on host(s) <4*hx-noah-08-09>, in queue <research-rh74>, as user <alexwjung> in cluster <EBI> at Fri Jun 11 13:49:57 2021
+</homes/alexwjung> was used as the home directory.
+</nfs/nobackup/gerstung/awj/projects/ProbCox/compute/scripts> was used as the working directory.
+Started at Fri Jun 11 13:49:57 2021
+Terminated at Fri Jun 11 14:10:27 2021
+Results reported at Fri Jun 11 14:10:27 2021
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+./probh5.sh
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   4432.29 sec.
+    Max Memory :                                 272 MB
+    Average Memory :                             262.56 MB
+    Total Requested Memory :                     16000.00 MB
+    Delta Memory :                               15728.00 MB
+    Max Swap :                                   2766 MB
+    Max Processes :                              4
+    Max Threads :                                9
+    Run time :                                   1235 sec.
+    Turnaround time :                            1231 sec.
+
+The output (if any) is above this job summary.
+
