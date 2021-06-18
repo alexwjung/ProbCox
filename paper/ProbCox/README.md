@@ -41,8 +41,9 @@ The original scripts/data/outputs from the analysis are in the following folders
 - The scripts used to run the analysis are found in [Scripts](./scripts)
 - A dedicated folder for the analysis of the UKB data with subfolder [output](./ukb/out) and [scripts](./ukb/scripts) can be found in [UKB-Analysis](./ukb)
 
-Notebooks for easy replication of the analysis can be found in [Replication](./replication)
-
+Notebooks for easy replication of the analysis can be found in [Replication](./replication)  
+The figures and tables are listed in the order as they appear in the paper (supplementary materials at the end).  
+Some of the additional results in the supplementary materials can be produced by the same notebooks as for the main paper.   
 
 Link to the .ipynb files - link to a specific colab session
 
@@ -62,17 +63,18 @@ Link to the .ipynb files - link to a specific colab session
 - To replicate the tables presented in the paper go to [Replicate Tables](./replication/tables)
     - [Data Example](./replication/simulation/tables/data_example.ipynb) - [Colab](https://colab.research.google.com/drive/1yHM5iDRE0GqTsj7Jpql32PjpNJaopSJX?usp=sharing)
     - [Likelihood Approximation](./replication/simulation/tables/likelihood_approx.ipynb) - [Colab](https://colab.research.google.com/drive/1HJeGSiSX6_plwbgJleY4RjYFa13Gm2O-?usp=sharing)
-    - [Likelihood Approximation - large P](./replication/simulation/tables/likelihood_approx_additional1.ipynb) - [Colab](https://colab.research.google.com/drive/1USX1g8PmHkm6Di1WiwAV0u9nJdZ1JtPw?usp=sharing)
-    - [Likelihood Approximation - predictor](./replication/simulation/tables/likelihood_approx_additional2.ipynb) - [Colab](https://colab.research.google.com/drive/1Kx2y_E4aSLx6AG0rlQd3pKDJ2F6HR-_f?usp=sharing)
     - [Standard Case 1](./replication/simulation/tables/standard_case1_table.ipynb) - [Colab](https://colab.research.google.com/drive/11XX0E36TUTNnTFhEeW-It7YIm-5vKc4q?usp=sharing)
     - [Standard Case 2](./replication/simulation/tables/standard_case2_table.ipynb) - [Colab](https://colab.research.google.com/drive/13Pt2tMoJAKkgpU-L9KmqWj-tgsgQNBaz?usp=sharing)
     - [High-dimensional Case](./replication/simulation/tables/highdimensional_case_table.ipynb) - [Colab](https://colab.research.google.com/drive/1Uj6lQaivKj7UaEgR-j5feZgXFhXke0R1?usp=sharing)
+    - [Likelihood Approximation - large P](./replication/simulation/tables/likelihood_approx_additional1.ipynb) - [Colab](https://colab.research.google.com/drive/1USX1g8PmHkm6Di1WiwAV0u9nJdZ1JtPw?usp=sharing)
+    - [Likelihood Approximation - predictor](./replication/simulation/tables/likelihood_approx_additional2.ipynb) - [Colab](https://colab.research.google.com/drive/1Kx2y_E4aSLx6AG0rlQd3pKDJ2F6HR-_f?usp=sharing)
 
 - To replicate the figures presented in the paper go to [Replicate Figures](./replication/figures)
     - [Schematic](./replication/simulation/figures/schematic.ipynb) - [Colab](https://colab.research.google.com/drive/1Hz1IG6z4fOJBTNEIM6jSnyO6l586P3G1?usp=sharing)
     - [Likelihood Approximation](./replication/simulation/figures/likelihood_training.ipynb) - [Colab](https://colab.research.google.com/drive/1kz42UvTAag7XxEWCgMhw6GidP_fuwW4p?usp=sharing)
     - [High-dimensional](./replication/simulation/figures/hd.ipynb) - [Colab](https://colab.research.google.com/drive/1i_NbMRESZTNSHsqRlnRu0GuPA658UT9W?usp=sharing)
     - [Resource Comparison](./replication/simulation/figures/resource.ipynb) - [Colab](https://colab.research.google.com/drive/1MAf9qRDnYtG9XnW-GzVzyldVtMk-qlC2?usp=sharing)
+    - [Forest Plot](./replication/simulation/figures/forest_plot.ipynb) - [Colab](https://colab.research.google.com/drive/1sXzVkaF6_X4wSx_WgtR5PCCAFw8XMoqQ?usp=sharing)
     - [Additional Predictor](./replication/simulation/figures/lp.ipynb) - [Colab](https://colab.research.google.com/drive/1pfteqvgAbetdgRIWjoExQRYpYfT4x-q4?usp=sharing)
     - [Baseline Hazard](./replication/simulation/figures/baseline_hazard.ipynb) - [Colab](https://colab.research.google.com/drive/1PDp2G-ob1tjIlnh03j9TyoH7QlxDuGYM?usp=sharing)
 
