@@ -127,7 +127,6 @@ W = np.sign(theta_est_lower) == np.sign(theta_est_upper) # non zero parameters e
 col_idx = np.logical_and(np.squeeze(theta != 0), np.sum(W, axis=0) > 5) # true non-zero parameters
 
 
-
 ax[0].plot(theta[:10], custom_mean(theta_est, W, col_idx)[:10], ls='', marker='d', ms=2, c='#0aa9ff', label=r'$\bar{\hat{\theta}}_{binary}$')
 ax[0].plot(theta[10:20], custom_mean(theta_est, W, col_idx)[10:20], ls='', marker='*', ms=3, c='#1e8725', label=r'$\bar{\hat{\theta}}_{continious}$')
 
