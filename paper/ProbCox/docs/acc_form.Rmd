@@ -1,6 +1,5 @@
 ---
 title: "Author Contributions Checklist "
-author: Alexander Wolfgang Jung
 date: June 21, 2021
 output: pdf_document
 bibliography: probcox.bib

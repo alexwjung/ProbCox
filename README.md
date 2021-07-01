@@ -1,7 +1,7 @@
 # **Bayesian Cox Regression for Population-scale Inference in Electronic Health Records**.
 
 ## **Paper**
-[arXiv]()
+[arXiv](https://arxiv.org/abs/2106.10057)
 
 ## **Description**
 The Cox model is an indispensable tool for time-to-event analysis, particularly in biomedical research. However, medicine is undergoing a profound transformation, generating data at an unprecedented scale, which opens new frontiers to study and understand diseases. With the wealth of data collected, new challenges for statistical inference arise, as datasets are often high dimensional, exhibit an increasing number of measurements at irregularly spaced time points, and are simply too large to fit in memory. Many current implementations for time-to-event analysis are ill-suited for these problems as inference is computationally demanding and requires access to the full data at once.
@@ -26,7 +26,12 @@ Some quick jupyter notebooks (Google Colab) to try out the module can be found i
 The main scripts are found in [ProbCox](./src/probcox).
 
 ## **Citing**
-BIBTEX
+@article{jung2021bayesian,
+  title={Bayesian Cox Regression for Population-scale Inference in Electronic Health Records},
+  author={Jung, Alexander W and Gerstung, Moritz},
+  journal={arXiv preprint arXiv:2106.10057},
+  year={2021}
+}
 
 ## **License**
 [MIT License](./LICENSE)
