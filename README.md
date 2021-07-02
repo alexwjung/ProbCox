@@ -18,12 +18,7 @@ $ pip install probcox
 ## **Getting started**
 The main folder for the accompanying paper as well as all the scripts for replication are found in [Paper](./paper/ProbCox).
 
-Some quick jupyter notebooks (Google Colab) to try out the module can be found in [Examples](./examples).
-- Colab link for a small scale simulation open [Colab](https://colab.research.google.com/drive/1QiCWAAwFDey2LBshXzwBhn5sGeORzYlF?usp=sharing).
-- Colab link for a high-dimensional simulation open [Colab](https://colab.research.google.com/drive/1XAGdms1hWoINLxeThyhD7V0AXY8b-Ixo?usp=sharing).
-- Colab link for a data example on the larynx data [R - KMsurv](https://cran.r-project.org/web/packages/KMsurv/KMsurv.pdf)  open [Colab](https://colab.research.google.com/drive/12TNil6y4Cyxb7hI6WVLdcDgAw9WA5QBl?usp=sharing).
-
-The main scripts are found in [ProbCox](./src/probcox).
+The main scripts for the package are found in [ProbCox](./src/probcox).
 
 ## **Citing**
 @article{jung2021bayesian,
