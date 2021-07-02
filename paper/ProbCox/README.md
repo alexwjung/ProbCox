@@ -66,10 +66,10 @@ Link to the .ipynb files - link to a specific colab session
     - [Standard Case 1](./replication/tables/standard_case1_table.ipynb) - [Colab](https://colab.research.google.com/drive/1g9waGQ0t1dDp3gQyquHAoOWTn3-nF6tS)
     - [Standard Case 2](./replication/tables/standard_case2_table.ipynb) - [Colab](https://colab.research.google.com/drive/1z4lBhkLakOwiRakbOy7dIDgAMG423de6)
     - [High-dimensional Case](./replication/tables/highdimensional_case_table.ipynb) - [Colab](https://colab.research.google.com/drive/1y4-Zlmb-ncS-AtwThsnzFofTMfJw5BHo)
+    - The information for the application tables can be extracted from the [application](./replication/application) notebooks.
     - [Likelihood Approximation - large P](./replication/tables/likelihood_approx_additional1.ipynb) - [Colab](https://colab.research.google.com/drive/142OipPL3aadxomaOwvoui-iV-IuLhflr)
     - [Likelihood Approximation - predictor](./replication/tables/likelihood_approx_additional2.ipynb) - [Colab](https://colab.research.google.com/drive/1u0xA6s_HOGu94amigZOZnP39RNq_pypn)
-    - The information for the application tables can be extracted from the [application](./replication/application) notebooks
-
+    
 - To replicate the figures presented in the paper go to [Replicate Figures](./replication/figures)
     - [Schematic](./replication/figures/schematic.ipynb) - [Colab](https://colab.research.google.com/drive/1h3Yobtfwi6KyfUesWCeAPW-traP9Bi9r)
     - [Likelihood Approximation](./replication/figures/likelihood_approximation.ipynb) - [Colab](https://colab.research.google.com/drive/1BcOKb-1ywakrp-f1AD9td-CA5tMRZ5e2)
