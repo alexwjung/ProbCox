@@ -107,6 +107,9 @@ class PCox():
     def return_guide(self):
         return(self.guide)
 
+    def return_model(self):
+        return(self.model)
+
     def initialize(self, seed=11, num_particles=1, eta=0.5, rank=None):
         pyro.set_rng_seed(seed)
         self.make_guide(rank)
