@@ -60,7 +60,7 @@ class TVC():
     def return_lambda0(self):
         return(self.t_lambda0, self.lambda0)
 
-    def sample(self):
+    def sample(self, frailty=None):
         EOO = np.round(np.random.uniform(1000, 30000)).astype(int)
         # sample covariates:
         tsum = 0
@@ -96,7 +96,10 @@ class TVC():
         t = np.unique(t)
 
         # survial data
-        H = logisitc(np.matmul(X, self.theta) + basehaz)
+        if frailty:
+            H = logisitc(np.matmul(X, self.theta) + frailty + basehaz)
+        else:
+            H = logisitc(np.matmul(X, self.theta) + basehaz)
         t_diff = (t[1:] - t[:-1])
         event = False
 

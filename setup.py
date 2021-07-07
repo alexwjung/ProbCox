@@ -4,8 +4,8 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="probcox",
-    version="0.0.5",
+    name="probcox_testing",
+    version="0.0.2",
     author="Alexander Wolfgang Jung",
     author_email="alex.w.jung@googlemail.com",
     description="Probilistic Cox Regression",
@@ -22,6 +22,6 @@ setuptools.setup(
     ],
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
-    install_requires=["numpy", "torch", "pyro-ppl<1.6"],
+    install_requires=["numpy", "torch>1.8", "pyro-ppl<1.6"],
     python_requires=">=3.6",
 )
