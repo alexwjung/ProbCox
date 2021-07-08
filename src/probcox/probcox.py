@@ -56,9 +56,10 @@ class CoxPartialLikelihood(dist.TorchDistribution):
 # -----------------------------------------------------------------------------------------------------------------------------
 
 class PCox():
-    def __init__(self, predictor=None, guide=None, optimizer=None, loss=None, sampling_proportion=None, dtype=dtype):
+    def __init__(self, predictor=None, guide=None, model=None, optimizer=None, loss=None, sampling_proportion=None, dtype=dtype):
         self.predictor = predictor
         self.guide = guide
+        self.guide = model
         self.optimizer = optimizer
         self.loss = loss
         self.sampling_proportion = sampling_proportion
@@ -66,22 +67,25 @@ class PCox():
         super().__init__()
 
     def model(self, data):
-        # stoachstic update -likelihood adjustment
-        if self.sampling_proportion:
-            self.sampling_proportion[0] = torch.tensor([self.sampling_proportion[0]])
-            self.sampling_proportion[1] = torch.tensor([self.sampling_proportion[1]])
-            self.sampling_proportion[2] = torch.tensor([self.sampling_proportion[2]])
-            self.sampling_proportion[3] = torch.sum(data[0][:, -1])
-
-        # prior
-        if self.predictor:
-            pred = self.predictor(data)
+        if self.guide:
+            self.guide = self.guide
         else:
-            theta =  pyro.sample("theta", dist.Normal(0, 1).expand([data[1].shape[1], 1])).type(self.dtype)
-            pred = torch.mm(data[1], theta)
+            # stoachstic update -likelihood adjustment
+            if self.sampling_proportion:
+                self.sampling_proportion[0] = torch.tensor([self.sampling_proportion[0]])
+                self.sampling_proportion[1] = torch.tensor([self.sampling_proportion[1]])
+                self.sampling_proportion[2] = torch.tensor([self.sampling_proportion[2]])
+                self.sampling_proportion[3] = torch.sum(data[0][:, -1])
 
-        # Likelihood
-        pyro.sample("obs", CoxPartialLikelihood(pred=pred, sampling_proportion=self.sampling_proportion, dtype=self.dtype), obs=data[0])
+            # prior
+            if self.predictor:
+                pred = self.predictor(data)
+            else:
+                theta =  pyro.sample("theta", dist.Normal(0, 1).expand([data[1].shape[1], 1])).type(self.dtype)
+                pred = torch.mm(data[1], theta)
+
+            # Likelihood
+            pyro.sample("obs", CoxPartialLikelihood(pred=pred, sampling_proportion=self.sampling_proportion, dtype=self.dtype), obs=data[0])
 
     def make_guide(self, rank):
         if self.guide:
