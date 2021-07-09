@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="probcox_testing",
-    version="0.0.3",
+    version="0.0.9",
     author="Alexander Wolfgang Jung",
     author_email="alex.w.jung@googlemail.com",
     description="Probilistic Cox Regression",

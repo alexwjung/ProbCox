@@ -11,6 +11,7 @@ import torch
 from torch.distributions import constraints
 
 import pyro
+import pyro.poutine as poutine
 import pyro.distributions as dist
 from pyro.infer import Predictive
 
@@ -19,15 +20,16 @@ warnings.filterwarnings("ignore")
 
 import probcox as pcox
 
+from probcox import CoxPartialLikelihood
+
 dtype = torch.FloatTensor
 
-np.random.seed(7945)
-torch.manual_seed(1259)
-
+np.random.seed(24)
+torch.manual_seed(43)
 
 # Simulation Settings
 # =======================================================================================================================
-I = 1000 # Number of individuals
+I = 500 # Number of individuals
 P_binary = 3
 P_continuous = 3
 P = P_binary + P_continuous
@@ -41,8 +43,8 @@ TVC = pcox.TVC(theta=theta, P_binary=P_binary, P_continuous=P_continuous, dtype=
 TVC.make_lambda0(scale=scale)
 
 # Sample Data
-np.random.seed(5)
-torch.manual_seed(4)
+np.random.seed(9)
+torch.manual_seed(54)
 surv = torch.zeros((0, 3))
 X = torch.zeros((0, P))
 Z = torch.zeros((0, I))
@@ -125,7 +127,7 @@ plt.close()
 
 # Set missingness
 # =======================================================================================================================
-idx_missing = torch.rand(X.shape) < 0.25
+idx_missing = torch.rand(X.shape) < 0.1
 X[idx_missing] = float('nan')
 
 
@@ -188,7 +190,7 @@ def predictor(data, dtype=dtype):
     quant_impute = pyro.sample("quant_impute", dist.Normal(quant_mu, quant_sigma).expand([512, 3]).mask(False)).type(dtype)
 
     qual_p = pyro.sample("qual_p", dist.Beta(1, 1).expand([3])).type(dtype)
-    qual_impute = pyro.sample("qual_impute", dist.Uniform(0, 1).expand([512, 3])).type(dtype)
+    qual_impute = pyro.sample("qual_impute", dist.Uniform(0, 1).expand([512, 3]).mask(False)).type(dtype)
     qual_impute = (qual_impute <= qual_p).type(dtype)
 
     X_ = data[1].clone()
@@ -196,18 +198,24 @@ def predictor(data, dtype=dtype):
     X_[:, 3:][data[2][:, 3:]] = quant_impute[data[2][:, 3:]]
 
     #X_[:, 3:][data[2][:, 3:]] = qual_impute[data[2][:, 3:]]
-    pyro.sample("qual_unobserved1", dist.Bernoulli(qual_p[0]), obs=X_[:, 0][~data[2][:, 0]])
-    pyro.sample("qual_unobserved2", dist.Bernoulli(qual_p[1]), obs=X_[:, 1][~data[2][:, 1]])
-    pyro.sample("qual_unobserved3", dist.Bernoulli(qual_p[2]), obs=X_[:, 2][~data[2][:, 2]])
+    with poutine.mask(mask=~data[2][:, 0]):
+        pyro.sample("qual_unobserved1", dist.Bernoulli(qual_p[0]), obs=X_[:, 0])
+    with poutine.mask(mask=~data[2][:, 1]):
+        pyro.sample("qual_unobserved2", dist.Bernoulli(qual_p[1]), obs=X_[:, 1])
+    with poutine.mask(mask=~data[2][:, 2]):
+        pyro.sample("qual_unobserved3", dist.Bernoulli(qual_p[2]), obs=X_[:, 2])
 
-    pyro.sample("quant_unobserved1", dist.Normal(quant_mu[0], quant_sigma[0]), obs=X_[:, 3][~data[2][:, 3]])
-    pyro.sample("quant_unobserved2", dist.Normal(quant_mu[1], quant_sigma[1]), obs=X_[:, 4][~data[2][:, 4]])
-    pyro.sample("quant_unobserved3", dist.Normal(quant_mu[2], quant_sigma[2]), obs=X_[:, 5][~data[2][:, 5]])
+    with poutine.mask(mask=~data[2][:, 3]):
+        pyro.sample("quant_unobserved1", dist.Normal(quant_mu[0], quant_sigma[0]), obs=X_[:, 3])
+    with poutine.mask(mask=~data[2][:, 4]):
+        pyro.sample("quant_unobserved2", dist.Normal(quant_mu[1], quant_sigma[1]), obs=X_[:, 4])
+    with poutine.mask(mask=~data[2][:, 5]):
+        pyro.sample("quant_unobserved3", dist.Normal(quant_mu[2], quant_sigma[2]), obs=X_[:, 5])
 
     #pyro.sample("var2", dist.Bernoulli(qual_p), obs=X_[:, 3:])
 
     # inference
-    #theta =  pyro.sample("theta", dist.Normal(loc=0, scale=1).expand([data[1].shape[1], 1])).type(dtype)
+    #theta =  pyro.sample("theta", dist.Normal(loc=0, scale=1).expand([1, data[1].shape[1]])).type(dtype)
     theta =  pyro.sample("theta", dist.StudentT(1, loc=0, scale=0.001).expand([1, data[1].shape[1]])).type(dtype)
     pred = torch.mm(X_, theta.T)
     return(pred)
@@ -229,7 +237,7 @@ def guide(data, rank=6):
     qual_impute = pyro.sample("qual_impute", dist.Uniform(0, 1).expand([512, 3]).mask(False)).type(dtype)
 
     cov_diag = pyro.param("cov_diag", torch.full((data[1].shape[1],), 0.01), constraint=constraints.positive)
-    cov_factor = pyro.param("cov_factor", torch.randn((data[1].shape[1], rank)) * 0.01)
+    cov_factor = pyro.param("cov_factor", torch.randn((data[1].shape[1], rank)) * 0.001)
     loc = pyro.param('loc', torch.zeros(data[1].shape[1]))
     pyro.sample("theta", dist.LowRankMultivariateNormal(loc, cov_factor, cov_diag).expand((1,)))
 
@@ -242,7 +250,7 @@ def evaluate(surv, X, batchsize, sampling_proportion, iter_, predictor=predictor
         run = False
         pyro.clear_param_store()
         m = pcox.PCox(sampling_proportion=sampling_proportion, predictor=predictor, guide=guide)
-        m.initialize(eta=eta, num_particles=1)
+        m.initialize(eta=eta, num_particles=5)
         loss=[0]
         for ii in tqdm.tqdm(range((iter_))):
             idx = np.unique(np.concatenate((np.random.choice(np.where(surv[:, -1]==1)[0], 1, replace=False), np.random.choice(range(surv.shape[0]), batchsize, replace=False))))[:512] # random sample of data - force at least two events (no evaluation otherwise)
@@ -265,7 +273,7 @@ total_obs = surv.shape[0]
 total_events = torch.sum(surv[:, -1] == 1).numpy().tolist()
 pyro.clear_param_store()
 #out = evaluate(batchsize=512, iter_=10, surv=surv, X=X, sampling_proportion=[total_obs, None, total_events, None])
-g, mm = evaluate(batchsize=512, iter_=50000, surv=surv, X=X, sampling_proportion=[total_obs, None, total_events, None])
+g, mm = evaluate(batchsize=512, iter_=25000, surv=surv, X=X, sampling_proportion=[total_obs, None, total_events, None])
 
 predictive = Predictive(model=mm, guide=g, num_samples=1000, return_sites=('theta', 'obs'))
 samples = predictive([surv[-512:], X[-512:], idx_missing[-512:]])['theta']
@@ -288,3 +296,4 @@ ax.set_xlabel('theta')
 ax.set_ylabel('theta_hat')
 plt.show()
 plt.close()
+ 
