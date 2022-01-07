@@ -19,11 +19,10 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-os.chdir('/nfs/nobackup/gerstung/awj/projects/ProbCox/')
+#os.chdir('/nfs/nobackup/gerstung/awj/projects/ProbCox/')
+os.chdir('/nfs/research/gerstung/awj/projects/ProbCox/paper/ProbCox')
 
 sim_name = 'sim_sc1'
-
-
 
 # Make
 # =======================================================================================================================
@@ -31,14 +30,14 @@ I = 1000
 P = 6
 theta = np.asarray(pd.read_csv('./out/simulation/' + sim_name + '/theta.txt', header=None))
 
-
-
 # Overall Parameters
 # =======================================================================================================================
 
 N_obs = pd.read_csv('./out/simulation/' + sim_name + '/N_obs.txt', sep=';', header=None)
-print('Mean number of intervall observations: ', np.mean(N_obs.iloc[:, 1]))
-print('Mean number of censorship: ', 1 - (np.mean(N_obs.iloc[:, 2])/I))
+
+print(np.min(N_obs.iloc[:, 1]), np.median(N_obs.iloc[:, 1]), np.max(N_obs.iloc[:, 1]))
+print(np.min(1-N_obs.iloc[:, 2]/I), np.median(1-N_obs.iloc[:, 2]/I), np.max(1-N_obs.iloc[:, 2]/I))
+print(np.min(N_obs.iloc[:, 3]), np.median(N_obs.iloc[:, 3]), np.max(N_obs.iloc[:, 3]))
 
 # ProbCox
 # =======================================================================================================================

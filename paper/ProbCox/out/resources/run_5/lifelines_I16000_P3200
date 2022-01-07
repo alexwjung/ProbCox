@@ -1,0 +1,35 @@
+Job <./plifelines.sh> was submitted from host <hx-noah-50-03> by user <alexwjung> in cluster <EBI> at Thu Jan  6 14:43:59 2022
+Job was executed on host(s) <4*hx-noah-54-01>, in queue <research-rh74>, as user <alexwjung> in cluster <EBI> at Thu Jan  6 14:43:59 2022
+</homes/alexwjung> was used as the home directory.
+</nfs/nobackup/gerstung/awj/projects/ProbCox/paper/ProbCox/scripts/simulation/resources> was used as the working directory.
+Started at Thu Jan  6 14:43:59 2022
+Terminated at Thu Jan  6 21:36:15 2022
+Results reported at Thu Jan  6 21:36:15 2022
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+./plifelines.sh
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   78357.06 sec.
+    Max Memory :                                 23321 MB
+    Average Memory :                             20560.68 MB
+    Total Requested Memory :                     32000.00 MB
+    Delta Memory :                               8679.00 MB
+    Max Swap :                                   25259 MB
+    Max Processes :                              4
+    Max Threads :                                19
+    Run time :                                   24736 sec.
+    Turnaround time :                            24736 sec.
+
+The output (if any) follows:
+
+I16000_P3200
+Iteration 1: norm_delta = 0.31610, step_size = 0.90000, ll = -35113.90499, newton_decrement = 1012.92713, seconds_since_start = 5027.9Iteration 2: norm_delta = 0.03005, step_size = 0.90000, ll = -34114.92330, newton_decrement = 9.14667, seconds_since_start = 9748.5Iteration 3: norm_delta = 0.00302, step_size = 0.90000, ll = -34105.86650, newton_decrement = 0.09209, seconds_since_start = 14730.1Iteration 4: norm_delta = 0.00034, step_size = 1.00000, ll = -34105.77533, newton_decrement = 0.00092, seconds_since_start = 19596.0Iteration 5: norm_delta = 0.00000, step_size = 1.00000, ll = -34105.77441, newton_decrement = 0.00000, seconds_since_start = 24624.4Convergence completed after 5 iterations.
+24675.04963350296

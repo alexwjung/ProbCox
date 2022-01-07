@@ -67,12 +67,10 @@ def run(surv, pred, batch, est):
 
 # Simulation Settings
 # =======================================================================================================================
-
 I = [5000, 10000]
 P = [10, 20]
 C = [0.5, 0.75, 0.95, 0.99]
 B = [64, 128, 256, 512]
-
 
 # Simulation
 # =======================================================================================================================
@@ -115,7 +113,6 @@ res2 = np.round(res2, 2)
 
 pd.DataFrame(np.concatenate((np.asarray(sim_n)[:, None], res.astype(str)), axis=1)).to_csv('./out/simulation/tables/likelihood_approx_MPE.csv')
 pd.DataFrame(np.concatenate((np.asarray(sim_n)[:, None], res2.astype(str)), axis=1)).to_csv('./out/simulation/tables/likelihood_approx_MAPE.csv')
-
 
 # Adjustments
 # =======================================================================================================================

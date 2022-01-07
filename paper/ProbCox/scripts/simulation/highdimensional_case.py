@@ -7,10 +7,9 @@ High Dimensional Case Simulation:
 Moderate sized simulation with P >> N >> I
 
 
-individuals:  10000
+individuals:  1000
 covaraites:   5000 binary (0.2), 5000 Normal(0, 1)
 theta:        ~ N(0, 0.75^2)
-censoring:    ~ 0.
 runs:         200 - Seed = 1, 2, ..., 200
 
 
@@ -50,7 +49,7 @@ torch.manual_seed(543)
 
 sim_name = 'sim_hd'
 
-os.chdir('/nfs/nobackup/gerstung/awj/projects/ProbCox/')
+os.chdir('/nfs/nobackup/gerstung/awj/projects/ProbCox/paper/ProbCox')
 
 # cluster variable
 try:
@@ -78,7 +77,7 @@ P_continuous = 5000
 P = P_binary + P_continuous
 theta = np.random.normal(0, 0.75, 20)[:, None]
 theta = np.concatenate((theta[:10], np.zeros((4990, 1)), theta[10:], np.zeros((4990, 1))))
-scale = 2.5  # Scaling factor for Baseline Hazard
+scale = 3  # Scaling factor for Baseline Hazard
 
 
 # Simulation
@@ -131,7 +130,7 @@ total_events = torch.sum(surv[:, -1] == 1).numpy().tolist()
 # Save information on intervall observation and number of events
 if run_id != 0:
     with open('./out/simulation/' + sim_name + '/N_obs.txt', 'a') as write_out:
-        write_out.write(str(run_id) + '; ' + str(surv.shape[0]) + '; ' + str(torch.sum(surv[:, -1]).detach().numpy().tolist()))
+        write_out.write(str(run_id) + '; ' + str(surv.shape[0]) + '; ' + str(torch.sum(surv[:, -1]).detach().numpy().tolist()) + '; '  + str(1-np.unique(surv[surv[:, -1] == 1, 1]).shape[0]/surv[surv[:, -1] == 1, 1].shape[0]))
         write_out.write('\n')
 
 # Save data for R
@@ -158,7 +157,7 @@ def evaluate(surv, X, rank, batchsize, sampling_proportion, iter_, run_suffix, p
         m.initialize(eta=eta, rank=rank, num_particles=5)
         loss=[0]
         for ii in tqdm.tqdm(range((iter_))):
-            idx = np.unique(np.concatenate((np.random.choice(np.where(surv[:, -1]==1)[0], 1, replace=False), np.random.choice(range(surv.shape[0]), batchsize-1, replace=False)))) # random sample of data - force at least one event (no evaluation otherwise)
+            idx = np.unique(np.concatenate((np.random.choice(np.where(surv[:, -1]==1)[0], 1, replace=False), np.random.choice(range(surv.shape[0]), batchsize, replace=False))))[:batchsize] # random sample of data - force at least one event (no evaluation otherwise)
             data=[surv[idx], X[idx]] # subsampled data
             loss.append(m.infer(data=data))
             # divergence check
@@ -195,7 +194,6 @@ if run_id != 0:
     pyro.clear_param_store()
     out = evaluate(run_suffix='rank50_b1024', rank=50, batchsize=1024, iter_=25000, surv=surv, X=X, sampling_proportion=[total_obs, None, total_events, None])
 
-
     # execute R script
     a = '''
     rm(list=ls())
@@ -203,33 +201,86 @@ if run_id != 0:
     library(survival)
     library(glmnet)
     require(doMC)
-    registerDoMC(cores = 3)
-    ROOT_DIR =  '/nfs/nobackup/gerstung/awj/projects/ProbCox'
+    registerDoMC(cores = 5)
+    ROOT_DIR =  '/nfs/nobackup/gerstung/awj/projects/ProbCox/paper/ProbCox'
     '''
 
-    b = 'sim_name = ' + "'" + str(run_id)+ "'"
+    b = 'sim_name = ' + "'" + str(run_id) + "'"
 
     c = '''
     sim <- read.csv(paste(ROOT_DIR, '/tmp/', sim_name, '.csv', sep='') , header=FALSE, sep=";")
 
     sim <- as.data.frame(as.matrix(sim))
     yss = Surv(sim$V1, sim$V2, sim$V3)
-
-    cv.fit <-cv.glmnet(as.matrix(sim[, 4:10003]), yss, family ="cox", nfolds=3, parallel=TRUE, type.measure ="C", lambda=seq(0.01, 0.02, 0.0015))
-    m = glmnet(as.matrix(sim[, 4:10003]), yss, family ="cox", lambda=cv.fit$lambda.min)
-    x = paste(sim_name, paste(unname(coef(m)), collapse="; "), sep='; ')
-    write(x, file = paste(ROOT_DIR, '/out/simulation/sim_hd/R_theta.txt', sep=''), ncolumns = 1, append = TRUE, sep = ";")
-
-    m = glmnet(as.matrix(sim[, 4:10003]), yss, family ="cox", lambda=cv.fit$lambda.1se)
-    x = paste(sim_name, paste(unname(coef(m)), collapse="; "), sep='; ')
-    write(x, file = paste(ROOT_DIR, '/out/simulation/sim_hd/R_theta_1se.txt', sep=''), ncolumns = 1, append = TRUE, sep = ";")
-
+    
+    # Lasso 
+    cv.fit <- c()
+    cv.fit <- cv.glmnet(as.matrix(sim[, 4:10003]), yss, family ="cox", nfolds=5, parallel=TRUE, type.measure ="C", alpha=1)
+    x = paste(sim_name, paste(unname(coef(cv.fit, s=cv.fit$lambda.min)), collapse="; "), sep='; ')
+    write(x, file = paste(ROOT_DIR, '/out/simulation/sim_hd/R_lasso_theta.txt', sep=''), ncolumns = 1, append = TRUE, sep = ";")
+    x = paste(sim_name, paste(unname(coef(cv.fit, s=cv.fit$lambda.1se)), collapse="; "), sep='; ')
+    write(x, file = paste(ROOT_DIR, '/out/simulation/sim_hd/R_lasso_theta_1se.txt', sep=''), ncolumns = 1, append = TRUE, sep = ";")
+    
+    w1 <- 1/abs(as.numeric(coef(cv.fit, s=cv.fit$lambda.min)))
+    w1[w1 == Inf] <- 1000000 
+    
+    w2 <- 1/abs(as.numeric(coef(cv.fit, s=cv.fit$lambda.1se)))
+    w2[w2 == Inf] <- 1000000 
+    
+    # Ridge 
+    #cv.fit <- c()
+    #cv.fit <- cv.glmnet(as.matrix(sim[, 4:10003]), yss, family ="cox", nfolds=5, parallel=TRUE, type.measure ="C", alpha=0)
+    #x = paste(sim_name, paste(unname(coef(cv.fit, s=cv.fit$lambda.min)), collapse="; "), sep='; ')
+    #write(x, file = paste(ROOT_DIR, '/out/simulation/sim_hd/R_ridge_theta.txt', sep=''), ncolumns = 1, append = TRUE, sep = ";")
+    #x = paste(sim_name, paste(unname(coef(cv.fit, s=cv.fit$lambda.1se)), collapse="; "), sep='; ')
+    #write(x, file = paste(ROOT_DIR, '/out/simulation/sim_hd/R_ridge_theta_1se.txt', sep=''), ncolumns = 1, append = TRUE, sep = ";")
+    
+    #w3 <- 1/abs(as.numeric(coef(cv.fit, s=cv.fit$lambda.min)))
+    #w3[w3 == Inf] <- 1000000 
+    
+    #w4 <- 1/abs(as.numeric(coef(cv.fit, s=cv.fit$lambda.1se)))
+    #w4[w4 == Inf] <- 1000000 
+    
+   
+    # Adaptive Lasso
+    # Alasso 
+    cv.fit <- c()
+    cv.fit <-cv.glmnet(as.matrix(sim[, 4:10003]), yss, family ="cox", nfolds=5, parallel=TRUE, type.measure="C", penalty.factor=w1)
+    x = paste(sim_name, paste(unname(coef(cv.fit, s=cv.fit$lambda.min)), collapse="; "), sep='; ')
+    write(x, file = paste(ROOT_DIR, '/out/simulation/sim_hd/R_Alasso1_theta.txt', sep=''), ncolumns = 1, append = TRUE, sep = ";")
+    x = paste(sim_name, paste(unname(coef(cv.fit, s=cv.fit$lambda.1se)), collapse="; "), sep='; ')
+    write(x, file = paste(ROOT_DIR, '/out/simulation/sim_hd/R_Alasso1_theta_1se.txt', sep=''), ncolumns = 1, append = TRUE, sep = ";")
+    
+    # Alasso 2
+    cv.fit <- c()
+    cv.fit <-cv.glmnet(as.matrix(sim[, 4:10003]), yss, family ="cox", nfolds=5, parallel=TRUE, type.measure="C", penalty.factor=w2)
+    x = paste(sim_name, paste(unname(coef(cv.fit, s=cv.fit$lambda.min)), collapse="; "), sep='; ')
+    write(x, file = paste(ROOT_DIR, '/out/simulation/sim_hd/R_Alasso2_theta.txt', sep=''), ncolumns = 1, append = TRUE, sep = ";")
+    x = paste(sim_name, paste(unname(coef(cv.fit, s=cv.fit$lambda.1se)), collapse="; "), sep='; ')
+    write(x, file = paste(ROOT_DIR, '/out/simulation/sim_hd/R_Alasso2_theta_1se.txt', sep=''), ncolumns = 1, append = TRUE, sep = ";")
+    
+    # Alasso 3
+    #cv.fit <- c()
+    #cv.fit <-cv.glmnet(as.matrix(sim[, 4:10003]), yss, family ="cox", nfolds=5, parallel=TRUE, type.measure="C", penalty.factor=w3)
+    #x = paste(sim_name, paste(unname(coef(cv.fit, s=cv.fit$lambda.min)), collapse="; "), sep='; ')
+    #write(x, file = paste(ROOT_DIR, '/out/simulation/sim_hd/R_Alasso3_theta.txt', sep=''), ncolumns = 1, append = TRUE, sep = ";")
+    #x = paste(sim_name, paste(unname(coef(cv.fit, s=cv.fit$lambda.1se)), collapse="; "), sep='; ')
+    #write(x, file = paste(ROOT_DIR, '/out/simulation/sim_hd/R_Alasso3_theta_1se.txt', sep=''), ncolumns = 1, append = TRUE, sep = ";")
+    
+    # Alasso 4
+    #cv.fit <- c()
+    #cv.fit <-cv.glmnet(as.matrix(sim[, 4:10003]), yss, family ="cox", nfolds=5, parallel=TRUE, type.measure="C", penalty.factor=w4)
+    #x = paste(sim_name, paste(unname(coef(cv.fit, s=cv.fit$lambda.min)), collapse="; "), sep='; ')
+    #write(x, file = paste(ROOT_DIR, '/out/simulation/sim_hd/R_Alasso4_theta.txt', sep=''), ncolumns = 1, append = TRUE, sep = ";")
+    #x = paste(sim_name, paste(unname(coef(cv.fit, s=cv.fit$lambda.1se)), collapse="; "), sep='; ')
+    #write(x, file = paste(ROOT_DIR, '/out/simulation/sim_hd/R_Alasso4_theta_1se.txt', sep=''), ncolumns = 1, append = TRUE, sep = ";")
+    
     '''
 
     with open('./tmp/' + str(run_id) + '.R', 'w') as write_out:
             write_out.write(a + b + c)
 
-    subprocess.check_call(['Rscript', './tmp/' + str(run_id) + '.R'], shell=False)
+    subprocess.check_call(['Rscript', '/nfs/nobackup/gerstung/awj/projects/ProbCox/paper/ProbCox/tmp/' + str(run_id) + '.R'], shell=False)
 
 
     os.remove('./tmp/' + str(run_id) + '.R')
@@ -238,4 +289,7 @@ if run_id != 0:
 
 print('finished')
 
-#for i in {1..200}; do bsub -env "VAR1=$i" -o /dev/null -e /dev/null -n 4 -M 30000 -R "rusage[mem=5000]" './highdimensional_case.sh'; sleep 30; done
+#for i in {11..200}; do bsub -env "VAR1=$i" -o /dev/null -e /dev/null -n 10 -M 5000 -R "rusage[mem=2000]" './highdimensional_case.sh'; sleep 30; done
+
+
+

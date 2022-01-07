@@ -7,8 +7,8 @@ Standard Case Simulation - Case 2:
 Moderate sized simulation with N >> I >> P
 
 
-individuals:  1000
-covaraites:   3 binary (0.2), 3 Normal(0, 1)
+individuals:  2000
+covaraites:   3 binary Ber(0.2), 3 Normal(0, 1)
 theta:        0.8, -0.5, 0, -0.7, 1, 0
 censoring:    ~ 0.94
 runs:         200 - Seed = 1, 2, ..., 200
@@ -50,7 +50,8 @@ torch.manual_seed(6784)
 
 sim_name = 'sim_sc2'
 
-os.chdir('/nfs/nobackup/gerstung/awj/projects/ProbCox/')
+#os.chdir('/nfs/nobackup/gerstung/awj/projects/ProbCox/')
+os.chdir('/nfs/research/gerstung/awj/projects/ProbCox/paper/ProbCox')
 
 # cluster variable
 try:
@@ -82,7 +83,6 @@ scale = 10  # Scaling factor for Baseline Hazard
 
 # Simulation
 # =======================================================================================================================
-
 # save theta
 if run_id == 0:
     np.savetxt('./out/simulation/' + sim_name + '/theta.txt', np.round(theta, 5))
@@ -130,13 +130,12 @@ total_events = torch.sum(surv[:, -1] == 1).numpy().tolist()
 # Save information on intervall observation and number of events
 if run_id != 0:
     with open('./out/simulation/' + sim_name + '/N_obs.txt', 'a') as write_out:
-        write_out.write(str(run_id) + '; ' + str(surv.shape[0]) + '; ' + str(torch.sum(surv[:, -1]).detach().numpy().tolist()))
+        write_out.write(str(run_id) + '; ' + str(surv.shape[0]) + '; ' + str(torch.sum(surv[:, -1]).detach().numpy().tolist()) + '; '  + str(1-np.unique(surv[surv[:, -1] == 1, 1]).shape[0]/surv[surv[:, -1] == 1, 1].shape[0]))
         write_out.write('\n')
 
 # Save data for R
 if run_id != 0:
     pd.DataFrame(np.concatenate((surv, X), axis=1)).to_csv('./tmp2/' + str(run_id) + '.csv', sep=';', index=False, header=False)
-
 
 # Inference Setup
 # =======================================================================================================================
@@ -179,7 +178,6 @@ def evaluate(surv, X, batchsize, sampling_proportion, iter_, run_suffix, predict
         write_out.write(str(run_id) + '; ')
         write_out.write(''.join([str(ii) + '; ' for ii in out['theta'][2].detach().numpy()[:, 0].tolist()]))
         write_out.write('\n')
-
 
 # Run
 # =======================================================================================================================
@@ -235,4 +233,4 @@ print('finished')
 
 
 # cluster submission
-#for i in {1..200}; do bsub -env "VAR1=$i" -o /dev/null -e /dev/null -n 2 -M 2500 -R "rusage[mem=1000]" './standard_case2.sh'; sleep 30; done
+#for i in {1..200}; do bsub -env "VAR1=$i" -o /dev/null -e /dev/null -n 2 -M 2500 -R "rusage[mem=1000]" './standard_case2.sh'; sleep 4; done

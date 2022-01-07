@@ -41,7 +41,8 @@ torch.manual_seed(9235)
 
 
 #os.chdir('/nfs/nobackup/gerstung/awj/projects/ProbCox/')
-os.chdir('/Users/alexwjung/projects/ProbCox/paper/ProbCox/')
+#os.chdir('/Users/alexwjung/projects/ProbCox/paper/ProbCox/')
+os.chdir('/nfs/research/gerstung/awj/projects/ProbCox/paper/ProbCox')
 
 # Funtion
 # =======================================================================================================================
@@ -69,23 +70,21 @@ def custom_mean(X, W, col_idx):
 # Plot Settings
 # =======================================================================================================================
 
-plt.rcParams['text.usetex'] = True
-plt.rcParams['font.size'] = 10
+plt.rcParams['font.size'] = 7
 plt.rcParams['axes.spines.top'] = False
 plt.rcParams['axes.spines.right'] = False
-
+cm = 1/2.54
 
 # Setup
 # =======================================================================================================================
 small_plot = True # sample 0 parameters - otherwise figure gets too large
-
 
 # Plot
 # =======================================================================================================================
 
 theta = np.asarray(pd.read_csv('./out/simulation/sim_hd/theta.txt', header=None))
 
-fig, ax = plt.subplots(1, 2, figsize=(8.27*0.90, 11.69/4), dpi=600, sharey=True)
+fig, ax = plt.subplots(1, 2, figsize=(13*cm, 5.5*cm), dpi=600, sharey=True)
 fig.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.1, hspace=None)
 
 suffix = 'rank50_b1024'
@@ -134,8 +133,6 @@ ax[0].plot(theta[10:20], custom_mean(theta_est, W, col_idx)[10:20], ls='', marke
 ax[0].plot(theta[:20], custom_mean(theta_est_lower, W, col_idx)[:20], ls='', marker='_', ms=5, c='.2', label=r'$\bar{\hat{\theta}}_{0.975}$')
 ax[0].plot(theta[:20], custom_mean(theta_est_upper, W, col_idx)[:20], ls='', marker='_', ms=5, c='.2', label=r'$\bar{\hat{\theta}}_{0.025}$')
 
-
-
 ax[0].set(xlim=(-2, 2), ylim=(-2, 2))
 ax[0].set_xlabel(r'$\theta$')
 ax[0].set_ylabel(r'$\hat{\theta}$')
@@ -144,11 +141,11 @@ ax[0].set_ylim([-2, 2])
 ax[0].set_xticks([-2, 0, 2])
 ax[0].set_xlim([-2, 2])
 ax[0].plot(ax[0].get_xlim(), ax[0].get_ylim(), ls=':', color='black', linewidth=0.5)
-ax[0].set_title(r'ProbCox - Rank: 50 \& Batch size: 1024', fontsize=10)
+ax[0].set_title(r'ProbCox - Rank: 50, Batch size: 1024', fontsize=7)
 
 
 # glmnet
-theta_est = pd.read_csv('./out/simulation/sim_hd/R_theta_1se.txt', header=None, sep=';')
+theta_est = pd.read_csv('./out/simulation/sim_hd/R_Alasso2_theta.txt', header=None, sep=';')
 theta_est = theta_est.dropna(axis=0)
 theta_est = theta_est.groupby(0).first().reset_index()
 theta_est = np.asarray(theta_est.iloc[:, 1:])
@@ -175,7 +172,11 @@ ax[1].set_ylim([-2, 2])
 ax[1].set_xticks([-2, 0, 2])
 ax[1].set_xlim([-2, 2])
 ax[1].plot(ax[1].get_xlim(), ax[1].get_ylim(), ls=':', color='black', linewidth=0.5)
-ax[0].legend(frameon=False, prop={'size': 8}, loc='lower right')
-ax[1].set_title(r'R-glmnet - $\lambda_{1se}$', fontsize=10)
+ax[0].legend(frameon=False, prop={'size': 5}, loc='lower right')
+ax[1].set_title(r'Adaptive Lasso - $\lambda_{min}^{w=\lambda_{1se}}$', fontsize=7)
 
-plt.savefig('./out/simulation/figures/hd.eps', bbox_inches='tight', dpi=600)
+#plt.show()
+plt.savefig('./out/simulation/figures/hd.eps', bbox_inches='tight', dpi=600, transparent=True)
+plt.savefig('./out/simulation/figures/hd.png', bbox_inches='tight', dpi=600, transparent=True)
+plt.savefig('./out/simulation/figures/hd.pdf', bbox_inches='tight', dpi=600, transparent=True)
+plt.close()

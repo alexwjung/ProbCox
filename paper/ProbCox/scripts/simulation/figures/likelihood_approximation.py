@@ -36,16 +36,16 @@ torch.manual_seed(9235)
 
 
 #os.chdir('/nfs/nobackup/gerstung/awj/projects/ProbCox/')
-os.chdir('/Users/alexwjung/projects/ProbCox/paper/ProbCox/')
+#os.chdir('/Users/alexwjung/projects/ProbCox/paper/ProbCox/')
+os.chdir('/nfs/research/gerstung/awj/projects/ProbCox/paper/ProbCox')
 
 # Plot Settings
 # =======================================================================================================================
 
-plt.rcParams['text.usetex'] = True
-plt.rcParams['font.size'] = 10
+plt.rcParams['font.size'] = 7
 plt.rcParams['axes.spines.top'] = False
 plt.rcParams['axes.spines.right'] = False
-
+cm = 1/2.54
 
 # Simulation Settings
 # =======================================================================================================================
@@ -108,20 +108,22 @@ for _ in tqdm.tqdm(range(10000)):
     m_approx.append(pcox.CoxPartialLikelihood(pred=pred[idx], sampling_proportion=[total_obs, batchsize, total_events, torch.sum(surv[idx, -1])]).log_prob(surv=surv[idx]).detach().numpy())
     m_approx_naive.append(pcox.CoxPartialLikelihood(pred=pred[idx], sampling_proportion=None).log_prob(surv=surv[idx]).detach().numpy() * (total_obs/batchsize))
 
+    
+    
 # Plots
 # =======================================================================================================================
 
-fig, ax = plt.subplots(1, 2, figsize=(8.27*0.90, 11.69/4), dpi=600, sharey=True)
+fig, ax = plt.subplots(1, 2, figsize=(13*cm, 5.5*cm), dpi=600, sharey=True)
 fig.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.1, hspace=None)
-ax[0].scatter(np.arange(5000), -np.asarray(LL_batch)[:5000], color='0.5', alpha=1, label='batch', s=0.2, marker='x')
+ax[0].scatter(np.arange(5000), -np.asarray(LL_batch)[:5000], color='0.5', alpha=1, label='', s=0.2, marker='x')
 ax[0].scatter(np.arange(5000), -np.asarray(LL_naive)[:5000], color='0.8', alpha=1, label='naive', s=0.2, marker='.')
 ax[0].plot(np.arange(5000), -np.asarray(LL_full)[:5000], color='0.1', label='full')
 ax[1].axhline(-m_est, color='#0b64e0')
 ax[0].set_xlabel(r'$Steps$')
 ax[0].set_ylabel(r'$-\log \mathcal{L}(D|\theta)$')
 
-#ax[0].set_yticks([2400, 2800, 3200])
-#ax[0].set_ylim([2400, 3200])
+ax[0].set_yticks([750, 1500, 2250])
+ax[0].set_yticklabels([750, 1500, 2250])
 ax[0].set_xticks([0, 2500, 5000])
 ax[0].set_xlim([0, 5000])
 
@@ -130,7 +132,11 @@ ax[1].hist(-np.asarray(m_approx_naive), bins=50, alpha=1, color='0.8', density=T
 ax[1].axhline(-m_est, color='0.1', label='full')
 ax[1].spines['bottom'].set_visible(False)
 ax[1].set_xticks([])
-ax[1].legend(frameon=False, prop={'size': 8})
+ax[1].legend(frameon=False, prop={'size': 6})
+
 #plt.show()
-#plt.close()
-plt.savefig('./out/simulation/figures/likelihood_approximation.eps', bbox_inches='tight', dpi=600)
+plt.savefig('./out/simulation/figures/likelihood_approximation.eps', bbox_inches='tight', dpi=600, transparent=True)
+plt.savefig('./out/simulation/figures/likelihood_approximation.png', bbox_inches='tight', dpi=600, transparent=True)
+plt.savefig('./out/simulation/figures/likelihood_approximation.pdf', bbox_inches='tight', dpi=600, transparent=True)
+plt.close()
+
