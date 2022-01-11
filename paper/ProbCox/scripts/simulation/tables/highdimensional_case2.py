@@ -20,8 +20,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-#os.chdir('/nfs/nobackup/gerstung/awj/projects/ProbCox/')
-os.chdir('/nfs/research/gerstung/awj/projects/ProbCox/paper/ProbCox')
+os.chdir('/nfs/nobackup/gerstung/awj/projects/ProbCox/paper/ProbCox')
+#os.chdir('/nfs/research/gerstung/awj/projects/ProbCox/paper/ProbCox')
 
 sim_name = 'sim_hd2'
 
@@ -139,12 +139,14 @@ for suffix in ['rank5', 'rank50']:
     theta_est_lower = theta_bound[:, :1000]
     theta_est_upper = theta_bound[:, 1000:]
 
-    pd.DataFrame(np.concatenate((np.round(np.mean(np.sum(np.sign(theta_est_lower[:, :]) == np.sign(theta_est_upper[:, :]), axis=1)))[None, None], np.round(np.mean(np.sum((np.sign(theta_est_lower[:, :]) == np.sign(theta_est_upper[:, :])) * np.squeeze(theta != 0)[None, :], axis=1)))[None, None]), axis=1)).to_csv('./out/simulation/tables/' + sim_name + '_ProbCox_main_add_' + suffix + '.csv')
+    pd.DataFrame(np.concatenate((np.round(np.mean(np.sum(np.sign(theta_est_lower[:, :]) == np.sign(theta_est_upper[:, :]), axis=1)))[None, None],
+                                 np.round(np.mean(np.sum((np.sign(theta_est_lower[:, :]) == np.sign(theta_est_upper[:, :])) * np.squeeze(theta != 0)[None, :], axis=1)))[None, None],
+                                 np.round(np.mean(np.sum((np.sign(theta_est_lower[:, :]) == np.sign(theta_est_upper[:, :])) * np.squeeze(theta == 0)[None, :], axis=1)))[None, None]), axis=1)).to_csv('./out/simulation/tables/' + sim_name + '_ProbCox_main_add_' + suffix + '.csv')
 
 
 # R Cox
 # =======================================================================================================================
-for suffix in ['R_lasso_theta', 'R_lasso_theta_1se', 'R_Alasso1_theta', 'R_Alasso1_theta_1se', 'R_Alasso2_theta', 'R_Alasso2_theta_1se', 'R_SCAD_theta', 'R_MCP_theta']:
+for suffix in ['R_lasso_theta', 'R_lasso_theta_1se', 'R_Alasso1_theta', 'R_Alasso1_theta_1se', 'R_Alasso2_theta', 'R_Alasso2_theta_1se', 'R_SCAD_theta', 'R_MCP_theta', 'R_BVSNLP_theta']:
 
     res = np.zeros((P, 7))
     res[:, 0] = theta[:, 0]
@@ -172,6 +174,8 @@ for suffix in ['R_lasso_theta', 'R_lasso_theta_1se', 'R_Alasso1_theta', 'R_Alass
     res.iloc[:, 5] = '-'
     res.to_csv('./out/simulation/tables/' + sim_name + '_' +  suffix + '_main' + '.csv')
 
-    pd.DataFrame(np.concatenate((np.round(np.mean(np.sum(theta_est != 0, axis=1)))[None, None], np.round(np.mean(np.sum((theta_est != 0) * np.squeeze(theta != 0)[None, :], axis=1)))[None, None]), axis=1)).to_csv('./out/simulation/tables/' + sim_name + '_' + suffix + '_add' + '.csv')
+    pd.DataFrame(np.concatenate((np.round(np.mean(np.sum(theta_est != 0, axis=1)))[None, None],
+                                 np.round(np.mean(np.sum((theta_est != 0) * np.squeeze(theta != 0)[None, :], axis=1)))[None, None],
+                                 np.round(np.mean(np.sum((theta_est != 0) * np.squeeze(theta == 0)[None, :], axis=1)))[None, None]), axis=1)).to_csv('./out/simulation/tables/' + sim_name + '_' + suffix + '_add' + '.csv')
 
 print('finished')

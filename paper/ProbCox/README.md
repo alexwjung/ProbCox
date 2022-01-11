@@ -35,7 +35,7 @@ We provide an algorithm to efficiently simulate event times with time-varying co
 
 The original scripts/data/outputs from the analysis are in the following folders:
 - The accompanying data can be found in [Data](./data)
-- Information on the installed packages, the Author Contributions Checklist, and other relevant documents are found in [Docs](./docs)
+- Information on relevant documents are found in [Docs](./docs)
 - Most of the outputs and raw files, like estimates, tables, figures etc. are found in [Out](./out)
 - A dedicated folder with the relevant outputs for the paper can be found in [Paper](./paper)
 - The scripts used to run the analysis are found in [Scripts](./scripts)
@@ -58,6 +58,7 @@ Link to the .ipynb files - link to a specific colab session
     - [Standard Case 1](./replication/simulation/standard_case1.ipynb) - [Colab](https://colab.research.google.com/drive/1zSDf9gLQpszHfkyidZqwMoipQtv4Z9MQ)
     - [Standard Case 2](./replication/simulation/standard_case2.ipynb) - [Colab](https://colab.research.google.com/drive/1Mj-hxLaJ5wTcUkGiaEaR0IDkVrbSOHof)
     - [High-dimensional Case](./replication/simulation/highdimensional_case.ipynb) - [Colab](https://colab.research.google.com/drive/1-dcQ-PRfmIxDyH3O9JVwzwPLnKDCPPg1)
+    - [High-dimensional Case2](./replication/simulation/highdimensional_case2.ipynb) - [Colab](https://colab.research.google.com/drive/1Um53O99TTmJweumiDC_QJv11C6AYTVCR)
     - [Resources](./replication/simulation/resources.ipynb) - [Colab](https://colab.research.google.com/drive/1WqB5CtoGZbknBK1yt3L2e6_aEeQJg_DY)
 
 - To replicate the tables presented in the paper go to [Replicate Tables](./replication/tables)
@@ -66,10 +67,11 @@ Link to the .ipynb files - link to a specific colab session
     - [Standard Case 1](./replication/tables/standard_case1_table.ipynb) - [Colab](https://colab.research.google.com/drive/1g9waGQ0t1dDp3gQyquHAoOWTn3-nF6tS)
     - [Standard Case 2](./replication/tables/standard_case2_table.ipynb) - [Colab](https://colab.research.google.com/drive/1z4lBhkLakOwiRakbOy7dIDgAMG423de6)
     - [High-dimensional Case](./replication/tables/highdimensional_case_table.ipynb) - [Colab](https://colab.research.google.com/drive/1y4-Zlmb-ncS-AtwThsnzFofTMfJw5BHo)
+    - [High-dimensional Case2](./replication/tables/highdimensional_case2_table.ipynb) - [Colab](https://colab.research.google.com/drive/13yEyrKgWSqlZSRtXfFcaHA2kHCKXmQZa)
     - The information for the application tables can be extracted from the [application](./replication/application) notebooks.
     - [Likelihood Approximation - large P](./replication/tables/likelihood_approx_additional1.ipynb) - [Colab](https://colab.research.google.com/drive/142OipPL3aadxomaOwvoui-iV-IuLhflr)
     - [Likelihood Approximation - predictor](./replication/tables/likelihood_approx_additional2.ipynb) - [Colab](https://colab.research.google.com/drive/1u0xA6s_HOGu94amigZOZnP39RNq_pypn)
-    
+
 - To replicate the figures presented in the paper go to [Replicate Figures](./replication/figures)
     - [Schematic](./replication/figures/schematic.ipynb) - [Colab](https://colab.research.google.com/drive/1h3Yobtfwi6KyfUesWCeAPW-traP9Bi9r)
     - [Likelihood Approximation](./replication/figures/likelihood_approximation.ipynb) - [Colab](https://colab.research.google.com/drive/1BcOKb-1ywakrp-f1AD9td-CA5tMRZ5e2)

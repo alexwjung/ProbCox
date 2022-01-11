@@ -1,0 +1,21 @@
+\begin{table}[h!]
+\centering
+\caption{}
+\label{tab:highdim_ident}
+\resizebox{0.34\textwidth}{!}{%
+\begin{tabular}{@{}lll@{}}
+\hline\hline \\
+                                                   & $\overline{TP}$ & $\overline{FP}$ \\ \midrule
+ProbCox - Rank: 5 \& Batch size 512                & 12              & 1               \\
+ProbCox - Rank: 50 \& Batch size 512               & 13              & 1               \\
+ProbCox - Rank: 50 \& Batch size 1024              & 13              & 2               \\
+Lasso - $\lambda_{min}$                            & 15              & 26              \\
+Lasso - $\lambda_{1se}$                            & 13              & 1               \\
+Adaptive Lasso - $\lambda_{min}^{w=\lambda_{1se}}$ & 13              & 1               \\
+Adaptive Lasso - $\lambda_{1se}^{w=\lambda_{1se}}$ & 12              & 0               \\
+Adaptive Lasso - $\lambda_{min}^{w=\lambda_{min}}$ & 15              & 9               \\
+Adaptive Lasso - $\lambda_{1se}^{w=\lambda_{min}}$ & 14              & 4               \\ \\ \hline\hline
+\multicolumn{3}{l}{Notes:}                                                            
+\end{tabular}%
+}
+\end{table}

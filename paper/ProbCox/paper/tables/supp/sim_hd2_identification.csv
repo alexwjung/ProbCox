@@ -1,0 +1,12 @@
+﻿,$\overline{TP}$,$\overline{FP}$
+ProbCox - Rank 5,6,9
+ProbCox - Rank 50,6,9
+SCAD,7,19
+MCP,6,5
+BVSNLP,5,0
+Lasso - $\lambda_{min}$,6,38
+Lasso - $\lambda_{1se}$,4,15
+Adaptive Lasso - $\lambda_{min}^{w=\lambda_{1se}}$,4,9
+Adaptive Lasso - $\lambda_{1se}^{w=\lambda_{1se}}$,4,7
+Adaptive Lasso - $\lambda_{min}^{w=\lambda_{min}}$,6,23
+Adaptive Lasso - $\lambda_{1se}^{w=\lambda_{min}}$,5,18

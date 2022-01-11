@@ -20,8 +20,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 #os.chdir('/nfs/nobackup/gerstung/awj/projects/ProbCox/')
-os.chdir('/nfs/research/gerstung/awj/projects/ProbCox/paper/ProbCox')
-
+#os.chdir('/nfs/research/gerstung/awj/projects/ProbCox/paper/ProbCox')
+os.chdir('/nfs/nobackup/gerstung/awj/projects/ProbCox/paper/ProbCox')
 sim_name = 'sim_ls'
 
 # Make
@@ -42,7 +42,7 @@ print(np.min(1-N_obs.iloc[:, 2]/I), np.median(1-N_obs.iloc[:, 2]/I), np.max(1-N_
 # ProbCox
 # =======================================================================================================================
 
-for batchsize in ['100']:
+for batchsize in ['b1000']:
 
     # empty file to write results into
     res = np.zeros((P, 6))
@@ -52,19 +52,19 @@ for batchsize in ['100']:
     theta_est = theta_est.dropna(axis=0)
     theta_est = theta_est.groupby(0).first().reset_index()
     theta_est = theta_est.iloc[:, :-1]
-    assert theta_est.shape[0] == 5
+    assert theta_est.shape[0] == 25
 
     theta_est_lower = pd.read_csv('./out/simulation/' + sim_name + '/probcox' + str(batchsize) + '_theta_lower.txt', header=None, sep=';')
     theta_est_lower = theta_est_lower.dropna(axis=0)
     theta_est_lower = theta_est_lower.groupby(0).first().reset_index()
     theta_est_lower = theta_est_lower.iloc[:, :-1]
-    assert theta_est_lower.shape[0] == 5
+    assert theta_est_lower.shape[0] == 25
 
     theta_est_upper = pd.read_csv('./out/simulation/' + sim_name + '/probcox' + str(batchsize) + '_theta_upper.txt', header=None, sep=';')
     theta_est_upper = theta_est_upper.dropna(axis=0)
     theta_est_upper = theta_est_upper.groupby(0).first().reset_index()
     theta_est_upper = theta_est_upper.iloc[:, :-1]
-    assert theta_est_upper.shape[0] == 5
+    assert theta_est_upper.shape[0] == 25
 
     theta_bound = theta_est_lower.merge(theta_est_upper, how='inner', on=0)
     theta_bound = theta_bound.merge(theta_est, how='inner', on=0)

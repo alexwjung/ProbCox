@@ -149,6 +149,7 @@ if run_id != 0:
     registerDoMC(cores = 3)
     library(coxed)
     library(ncvreg)
+    library(BVSNLP)
     ROOT_DIR =  '/nfs/nobackup/gerstung/awj/projects/ProbCox/paper/ProbCox'
     '''
 
@@ -235,6 +236,14 @@ if run_id != 0:
     fit <- m$fit$beta[,m$min]
     x = paste(sim_name, paste(unname(m$fit$beta[,m$min]), collapse="; "), sep='; ')
     write(x, file = paste(ROOT_DIR, '/out/simulation/sim_hd2/R_MCP_theta.txt', sep=''), ncolumns = 1, append = TRUE, sep = ";")
+
+    # BVSNLP
+    bout <- bvs(sim[, 1:1000], yss, family = "survival", nlptype = "piMOM", niter = 2000, ncpu=8)
+    coef <- rep(0, 1000)
+    coef[bout$HPM] <- bout$beta_hat
+
+    x = paste(sim_name, paste(unname(coef), collapse="; "), sep='; ')
+    write(x, file = paste(ROOT_DIR, '/out/simulation/sim_hd2/R_BVSNLP_theta.txt', sep=''), ncolumns = 1, append = TRUE, sep = ";")
 
     '''
 

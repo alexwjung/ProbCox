@@ -77,7 +77,7 @@ P_binary = 5
 P_continuous = 5
 P = P_binary + P_continuous
 theta = np.random.normal(0, 0.75, (10, 1))
-scale = 30  # Scaling factor for Baseline Hazard
+scale = 25  # Scaling factor for Baseline Hazard
 
 # Simulation
 # =======================================================================================================================
@@ -96,9 +96,6 @@ TVC = pcox.TVC(theta=theta, P_binary=P_binary, P_continuous=P_continuous, dtype=
 
 # Sample baseline hazard - scale is set to define censorship/events
 TVC.make_lambda0(scale=scale)
-if run_id == 0:
-    # gauge the number to desired level of censorship
-    print('\n Censorship: ', str(1 - (np.sum([torch.sum(TVC.sample()[0][:, -1]).numpy() for ii in tqdm.tqdm(range(10000))])/10000)))
 
 # Return the underlying shape of the baseline hazard and plot
 if run_id == 0:
@@ -109,16 +106,23 @@ if run_id == 0:
     np.savetxt('./out/simulation/' + sim_name + '/lambda0.txt', np.concatenate((t_l[:, None], ll), axis=1))
 
 # Sample Data
-np.random.seed(run_id)
-torch.manual_seed(run_id)
+np.random.seed(run_id+100)
+torch.manual_seed(run_id+100)
 surv = []
 X = []
 
-for __ in tqdm.tqdm(range(I)):
+def f(i):
     a, b = TVC.sample()
-    surv.extend(a.tolist())
-    X.extend(b.tolist())
-    
+    return([a, b])
+
+surv = []
+X = []
+with Pool(processes=8) as pool:
+    for i in pool.imap_unordered(f, tqdm.tqdm(range(I))):
+        a, b = i
+        surv.extend(a.tolist())
+        X.extend(b.tolist())            
+
 surv = torch.tensor(surv).type(dtype)
 X = torch.tensor(X).type(dtype)
 
@@ -135,45 +139,29 @@ if run_id != 0:
     with open('./out/simulation/' + sim_name + '/N_obs.txt', 'a') as write_out:
         write_out.write(str(run_id) + '; ' + str(surv.shape[0]) + '; ' + str(torch.sum(surv[:, -1]).detach().numpy().tolist()))
         write_out.write('\n')
-
-idx_where = np.where(surv[:, -1]==1)[0]
-total = surv.shape[0]
-
-def sample(ii, batchsize=100, idx_where=idx_where, total=total):
-    np.random.seed(ii)
-    return(np.unique(np.concatenate((np.random.choice(idx_where, 1, replace=False), np.random.choice(range(total), batchsize, replace=False))))[:batchsize])
-idxmat100 = []
-
-
-n=0
-with Pool(processes=10) as pool:
-    for idx in pool.imap_unordered(sample, range(10000)):
-        idxmat100.extend([idx])
-        n+=1
-        print(n)
-
-idxmat100 = np.asarray(idxmat100)
+        
 
 # Inference Setup
 # =======================================================================================================================
 
 def predictor(data):
-    theta =  pyro.sample("theta", dist.Normal(loc=0, scale=1).expand([data[1].shape[1], 1])).type(dtype)
+    theta =  pyro.sample("theta", dist.StudentT(1, loc=0, scale=0.001).expand([data[1].shape[1], 1])).type(dtype)
     pred = torch.mm(data[1], theta)
     return(pred)
 
-def evaluate(surv, X, batchsize, sampling_proportion, iter_, run_suffix, idxmat, predictor=predictor, sim_name=sim_name, run_id=run_id):
+def evaluate(surv, X, rank, batchsize, sampling_proportion, iter_, run_suffix, predictor=predictor, sim_name=sim_name, run_id=run_id):
     sampling_proportion[1] = batchsize
-    eta=5 # paramter for optimization
+    eta=0.1 # paramter for optimization
     run = True # repeat initalization if NAN encounterd while training - gauge correct optimization settings
     while run:
         run = False
         pyro.clear_param_store()
         m = pcox.PCox(sampling_proportion=sampling_proportion, predictor=predictor)
-        m.initialize(eta=eta, num_particles=3)
+        m.initialize(eta=eta, rank=rank, num_particles=5)
         loss=[0]
-        for ii in (range(iter_)):
-            idx = idxmat[ii, :]
+        locat = np.where(surv[:, -1]==1)[0]
+        for ii in tqdm.tqdm(range((iter_))):
+            idx = np.unique(np.concatenate((np.random.choice(locat, 1, replace=False), np.random.randint(surv.shape[0], size=int(batchsize*1.5)))))[:batchsize] # random sample of data - force at least one event (no evaluation otherwise)
             data=[surv[idx], X[idx]] # subsampled data
             loss.append(m.infer(data=data))
             # divergence check
@@ -200,8 +188,10 @@ def evaluate(surv, X, batchsize, sampling_proportion, iter_, run_suffix, idxmat,
 # =======================================================================================================================
 if run_id != 0:
     pyro.clear_param_store()
-    out = evaluate(run_suffix='100', batchsize=100, iter_=20000, surv=surv, X=X, sampling_proportion=[total_obs, None, total_events, None], idxmat=idxmat100)
+    out = evaluate(run_suffix='b1000', rank=5, batchsize=1000, iter_=100000, surv=surv, X=X, sampling_proportion=[total_obs, None, total_events, None])
     
 print('finished')
 
-#for i in {1..10}; do bsub -env "VAR1=$i" -n 16 -M 48000 -R "rusage[mem=16000]" './largescale_case.sh'; sleep 5; done
+#for i in 15 21; do bsub -env "VAR1=$i" -n 16 -M 52000 -R "rusage[mem=16000]" './largescale_case.sh'; sleep 1; done
+
+
