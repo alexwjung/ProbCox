@@ -23,13 +23,13 @@ sim_name = 'sim_ls'
 
 # Make
 # =======================================================================================================================
-I = 4000000
+I = 50000
 P = 10
 theta = np.asarray(pd.read_csv('./out/simulation/' + sim_name + '/theta.txt', header=None))
 
 #=======================================================================================================================
 
-for batchsize in ['b1000']:
+for batchsize in ['48']:
 
     # empty file to write results into
     res = np.zeros((P, 6))
@@ -39,19 +39,19 @@ for batchsize in ['b1000']:
     theta_est = theta_est.dropna(axis=0)
     theta_est = theta_est.groupby(0).first().reset_index()
     theta_est = theta_est.iloc[:, :-1]
-    assert theta_est.shape[0] == 25
+    assert theta_est.shape[0] == 50
 
     theta_est_lower = pd.read_csv('./out/simulation/' + sim_name + '/probcox' + str(batchsize) + '_theta_lower.txt', header=None, sep=';')
     theta_est_lower = theta_est_lower.dropna(axis=0)
     theta_est_lower = theta_est_lower.groupby(0).first().reset_index()
     theta_est_lower = theta_est_lower.iloc[:, :-1]
-    assert theta_est_lower.shape[0] == 25
+    assert theta_est_lower.shape[0] == 50
 
     theta_est_upper = pd.read_csv('./out/simulation/' + sim_name + '/probcox' + str(batchsize) + '_theta_upper.txt', header=None, sep=';')
     theta_est_upper = theta_est_upper.dropna(axis=0)
     theta_est_upper = theta_est_upper.groupby(0).first().reset_index()
     theta_est_upper = theta_est_upper.iloc[:, :-1]
-    assert theta_est_upper.shape[0] == 25
+    assert theta_est_upper.shape[0] == 50
 
     theta_bound = theta_est_lower.merge(theta_est_upper, how='inner', on=0)
     theta_bound = theta_bound.merge(theta_est, how='inner', on=0)

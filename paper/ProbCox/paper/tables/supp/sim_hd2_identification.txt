@@ -1,23 +1,27 @@
-\begin{table}[h!]
+\begin{table}[H]
 \centering
-\caption{}
+\caption{Overview of parameter identification for the high-dimensional case 2.}
 \label{tab:highdim2_ident}
-\resizebox{0.34\textwidth}{!}{%
+\resizebox{0.40\textwidth}{!}{%
 \begin{tabular}{@{}lll@{}}
-\hline\hline \\
+\hline\hline
+\addlinespace[0.75ex]
                                                    & $\overline{TP}$ & $\overline{FP}$ \\ \midrule
 ProbCox - Rank 5                                   & 6               & 9               \\
 ProbCox - Rank 50                                  & 6               & 9               \\
 SCAD                                               & 7               & 19              \\
 MCP                                                & 6               & 5               \\
 BVSNLP                                             & 5               & 0               \\
-Lasso - $\lambda_{min}$                            & 6               & 38              \\
-Lasso - $\lambda_{1se}$                            & 4               & 15              \\
-Adaptive Lasso - $\lambda_{min}^{w=\lambda_{1se}}$ & 4               & 9               \\
-Adaptive Lasso - $\lambda_{1se}^{w=\lambda_{1se}}$ & 4               & 7               \\
-Adaptive Lasso - $\lambda_{min}^{w=\lambda_{min}}$ & 6               & 23              \\
-Adaptive Lasso - $\lambda_{1se}^{w=\lambda_{min}}$ & 5               & 18              \\ \\ \hline\hline
-\multicolumn{3}{l}{Notes:}                                                            
+Lasso - $\lambda_{min}$                            & 5               & 15              \\
+Lasso - $\lambda_{1se}$                            & 4               & 4              \\\addlinespace[0.70ex]
+Adaptive Lasso - $\lambda_{min}^{w=\lambda_{1se}}$ & 4               & 7               \\\addlinespace[0.70ex]
+Adaptive Lasso - $\lambda_{1se}^{w=\lambda_{1se}}$ & 4               & 7               \\\addlinespace[0.70ex]
+Adaptive Lasso - $\lambda_{min}^{w=\lambda_{min}}$ & 6               & 21              \\\addlinespace[0.70ex]
+Adaptive Lasso - $\lambda_{1se}^{w=\lambda_{min}}$ & 5               & 18              \\ 
+\addlinespace[0.75ex]
+\hline\hline
+\addlinespace[0.75ex]
+\multicolumn{3}{l}{Notes: TP - True Positives, FP - False Positives}                                                            
 \end{tabular}%
 }
 \end{table}
