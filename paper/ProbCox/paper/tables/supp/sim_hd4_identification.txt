@@ -1,0 +1,23 @@
+\begin{table}[H]
+\centering
+\caption{Overview of parameter identification for the high-dimensional case - Prior elicitation.}
+\label{tab:highdim4_ident}
+\resizebox{0.40\textwidth}{!}{%
+\begin{tabular}{@{}lll@{}}
+\hline\hline
+\addlinespace[0.75ex]
+                                                   & $\overline{TP}$ & $\overline{FP}$ \\ \midrule
+Bayesian Lasso - $\lambda = 0.1$                                   & 9               & 1               \\
+Bayesian Lasso - $\lambda = 0.25$                                & 11               & 6               \\
+Bayesian Lasso - $\lambda = 0.5$                                            & 12               & 23              \\
+StudentT - $df=1, \sigma=0.001$                                              & 10               & 5               \\
+StudentT - $df=2, \sigma=0.01$                                            & 9               & 0               \\
+StudentT - $df=4, \sigma=0.1$                            & 9               & 1              \\
+
+\addlinespace[0.75ex]
+\hline\hline
+\addlinespace[0.75ex]
+\multicolumn{3}{l}{Notes: TP - True Positives, FP - False Positives}                                                            
+\end{tabular}%
+}
+\end{table}

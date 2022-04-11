@@ -15,7 +15,7 @@ Adaptive Lasso - $\lambda_{min}^{w=\lambda_{1se}}$ & 13              & 1        
 Adaptive Lasso - $\lambda_{1se}^{w=\lambda_{1se}}$ & 12              & 0               \\
 Adaptive Lasso - $\lambda_{min}^{w=\lambda_{min}}$ & 15              & 9               \\
 Adaptive Lasso - $\lambda_{1se}^{w=\lambda_{min}}$ & 14              & 4               \\ \\ \hline\hline
-\multicolumn{3}{l}{Notes:}                                                            
+\multicolumn{3}{l}{Notes: TP - True Positives, FP - False Positives}                                                            
 \end{tabular}%
 }
 \end{table}

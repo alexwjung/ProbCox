@@ -1,0 +1,185 @@
+'''
+
+High Dimensional Case Simulation - Figure:
+
+- plot true parameters vs estimated parameters - diagional indicates ideal fit
+- plot results from ProbCox vs glmnet (lambda=1se)
+
+'''
+
+# Modules
+# =======================================================================================================================
+import os
+import sys
+import shutil
+import subprocess
+import tqdm
+
+import numpy as np
+import pandas as pd
+
+import torch
+from torch.distributions import constraints
+
+import pyro
+import pyro.distributions as dist
+
+from pyro.infer import SVI, Trace_ELBO
+
+import matplotlib.pyplot as plt
+
+import warnings
+warnings.filterwarnings("ignore")
+
+import probcox as pcox
+
+dtype = torch.FloatTensor
+
+
+np.random.seed(5256)
+torch.manual_seed(9235)
+
+
+os.chdir('/nfs/nobackup/gerstung/awj/projects/ProbCox/paper/ProbCox')
+#os.chdir('/Users/alexwjung/projects/ProbCox/paper/ProbCox/')
+#os.chdir('/nfs/research/gerstung/awj/projects/ProbCox/paper/ProbCox')
+
+# Funtion
+# =======================================================================================================================
+def custom_mean(X, W, col_idx):
+    '''
+    - average for paramters of an array selcted by an indexing matrix
+
+    X :: array to apply mean along axis=0
+    W :: indexing which elements to use for mean computatiuon
+    col_idx :: indexing the columns where W is applied - otherwise standard mean without selecting elements
+    '''
+    m = []
+    assert X.shape == W.shape
+    N, M = X.shape
+
+    for jj in range(M):
+        if col_idx[jj] == True:
+            m.append(np.mean(X[W[:, jj], jj]))
+        else:
+            m.append(np.mean(X[:, jj]))
+    return(np.asarray(m))
+
+
+
+# Plot Settings
+# =======================================================================================================================
+
+plt.rcParams['font.size'] = 7
+plt.rcParams['axes.spines.top'] = False
+plt.rcParams['axes.spines.right'] = False
+cm = 1/2.54
+
+# Setup
+# =======================================================================================================================
+small_plot = True # sample 0 parameters - otherwise figure gets too large
+
+# Plot
+# =======================================================================================================================
+
+theta = np.asarray(pd.read_csv('./out/simulation/sim_hd3/theta.txt', header=None))
+
+fig, ax = plt.subplots(1, 2, figsize=(13*cm, 5.5*cm), dpi=600, sharey=True)
+fig.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.1, hspace=None)
+
+suffix = 'rank50'
+theta_est = pd.read_csv('./out/simulation/sim_hd3/probcox' + str(suffix) + '_theta.txt', header=None, sep=';')
+theta_est = theta_est.dropna(axis=0)
+theta_est = theta_est.groupby(0).first().reset_index()
+order = np.asarray(theta_est.iloc[:, 0])
+theta_est = theta_est.iloc[:, 1:-1]
+theta_est = np.asarray(theta_est).astype(float)
+
+theta_est_lower = pd.read_csv('./out/simulation/sim_hd3/probcox' + str(suffix) + '_theta_lower.txt', header=None, sep=';')
+theta_est_lower = theta_est_lower.dropna(axis=0)
+theta_est_lower = theta_est_lower.groupby(0).first().reset_index()
+assert np.all(np.asarray(theta_est_lower.iloc[:, 0]) == order)
+theta_est_lower = theta_est_lower.iloc[:, 1:-1]
+theta_est_lower = np.asarray(theta_est_lower).astype(float)
+
+theta_est_upper = pd.read_csv('./out/simulation/sim_hd3/probcox' + str(suffix) + '_theta_upper.txt', header=None, sep=';')
+theta_est_upper = theta_est_upper.dropna(axis=0)
+theta_est_upper = theta_est_upper.groupby(0).first().reset_index()
+assert np.all(np.asarray(theta_est_upper.iloc[:, 0]) == order)
+theta_est_upper = theta_est_upper.iloc[:, 1:-1]
+theta_est_upper = np.asarray(theta_est_upper).astype(float)
+
+if small_plot:
+    non_zeros = 250
+    idx = np.concatenate((np.arange(1490, 1510), np.random.choice(np.arange(1490), non_zeros, replace=False)
+    , np.random.choice(np.arange(1510, 3000), non_zeros, replace=False)
+    ))
+    theta = theta[idx, :] 
+    theta_est = theta_est[:, idx]
+    theta_est_lower = theta_est_lower[:, idx]
+    theta_est_upper = theta_est_upper[:, idx]
+
+
+for _ in range(50):
+    ax[0].plot(theta + np.random.normal(0, 0.01, (theta.shape[0], 1)), theta_est[_, :], ls='', marker='.', ms=1, c='.7')
+ax[0].plot(theta + np.random.normal(0, 0.01, (theta.shape[0], 1)), theta_est[0, :], ls='', marker='.', ms=1, c='0.7', label=r'$\hat{\theta}$')
+
+
+W = np.sign(theta_est_lower) == np.sign(theta_est_upper) # non zero parameters estimates (based on HPD95%)
+col_idx = np.logical_and(np.squeeze(theta != 0), np.sum(W, axis=0) > 5) # true non-zero parameters
+
+
+ax[0].plot(theta[:20], custom_mean(theta_est, W, col_idx)[:20], ls='', marker='*', ms=3, c='#1e8725', label=r'$\bar{\hat{\theta}}_{continious}$')
+
+
+ax[0].plot(theta[:20], custom_mean(theta_est_lower, W, col_idx)[:20], ls='', marker='_', ms=5, c='.2', label=r'$\bar{\hat{\theta}}_{0.975}$')
+ax[0].plot(theta[:20], custom_mean(theta_est_upper, W, col_idx)[:20], ls='', marker='_', ms=5, c='.2', label=r'$\bar{\hat{\theta}}_{0.025}$')
+
+ax[0].set(xlim=(-2, 2), ylim=(-2, 2))
+ax[0].set_xlabel(r'$\theta$')
+ax[0].set_ylabel(r'$\hat{\theta}$')
+ax[0].set_yticks([-2, 0, 2])
+ax[0].set_ylim([-2, 2])
+ax[0].set_xticks([-2, 0, 2])
+ax[0].set_xlim([-2, 2])
+ax[0].plot(ax[0].get_xlim(), ax[0].get_ylim(), ls=':', color='black', linewidth=0.5)
+ax[0].set_title(r'ProbCox - Rank: 30', fontsize=7)
+
+
+# glmnet
+theta_est = pd.read_csv('./out/simulation/sim_hd3/R_Alasso2_theta_1se.txt', header=None, sep=';')
+theta_est = theta_est.dropna(axis=0)
+theta_est = theta_est.groupby(0).first().reset_index()
+theta_est = np.asarray(theta_est.iloc[:, 1:])
+
+if small_plot:
+    theta_est = theta_est[:, idx]
+
+for _ in range(50):
+    ax[1].plot(theta + np.random.normal(0, 0.01, (theta.shape[0], 1)), theta_est[_, :], ls='', marker='x', ms=1, c='.7')
+ax[1].plot(theta + np.random.normal(0, 0.01, (theta.shape[0], 1)), theta_est[0, :], ls='', marker='x', ms=1, c='.7', label=r'$\hat{\theta}$')
+
+W = theta_est!=0 # non zero parameters estimates (based on HPD95%)
+col_idx = np.logical_and(np.squeeze(theta != 0), np.sum(W, axis=0) > 5) # true non-zero parameters
+
+ax[1].plot(theta[:20], custom_mean(theta_est, W, col_idx)[:20], ls='', marker='*', ms=3, c='#1e8725')
+
+
+ax[1].set(xlim=(-2, 2), ylim=(-2, 2))
+ax[1].set_xlabel(r'$\theta$')
+ax[1].set_ylabel('')
+ax[1].set_yticks([-2, 0, 2])
+ax[1].set_ylim([-2, 2])
+ax[1].set_xticks([-2, 0, 2])
+ax[1].set_xlim([-2, 2])
+ax[1].plot(ax[1].get_xlim(), ax[1].get_ylim(), ls=':', color='black', linewidth=0.5)
+ax[0].legend(frameon=False, prop={'size': 5}, loc='lower right')
+#ax[1].set_title(r'Adaptive Lasso - $\lambda_{min}^{w=\lambda_{1se}}$', fontsize=7)
+ax[1].set_title(r'Adaptive Lasso - $\lambda_{1se}^{w=\lambda_{1se}}$', fontsize=7)
+
+
+plt.savefig('./out/simulation/figures/hd3_1se.eps', bbox_inches='tight', dpi=600, transparent=True)
+plt.savefig('./out/simulation/figures/hd3_1se.png', bbox_inches='tight', dpi=600, transparent=True)
+plt.savefig('./out/simulation/figures/hd3_1se.pdf', bbox_inches='tight', dpi=600, transparent=True)
+plt.show()
+plt.close()

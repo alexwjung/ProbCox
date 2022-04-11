@@ -1,0 +1,10 @@
+﻿,$\overline{TP}$,$\overline{FP}$
+ProbCox - Rank: 10,11,1
+ProbCox - Rank: 30 ,11,1
+ProbCox - Rank: 50 ,11,1
+Lasso - $\lambda_{min}$,14,59
+Lasso - $\lambda_{1se}$,12,15
+Adaptive Lasso - $\lambda_{min}^{w=\lambda_{1se}}$,12,9
+Adaptive Lasso - $\lambda_{1se}^{w=\lambda_{1se}}$,11,1
+Adaptive Lasso - $\lambda_{min}^{w=\lambda_{min}}$,14,45
+Adaptive Lasso - $\lambda_{1se}^{w=\lambda_{min}}$,13,20

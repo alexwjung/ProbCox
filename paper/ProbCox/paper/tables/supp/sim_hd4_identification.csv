@@ -1,0 +1,7 @@
+﻿,$\overline{TP}$,$\overline{FP}$
+Bayesian Lasso - $\lambda = 0.1$,9,1
+Bayesian Lasso - $\lambda = 0.25$,11,6
+Bayesian Lasso - $\lambda = 0.5$,12,23
+"StudentT - $df=1, \sigma=0.001$",10,5
+"StudentT - $df=2, \sigma=0.01$",9,0
+"StudentT - $df=4, \sigma=0.1$",9,1
