@@ -41,10 +41,10 @@ torch.manual_seed(9235)
 
 
 #os.chdir('/nfs/nobackup/gerstung/awj/projects/ProbCox/')
-#os.chdir('/Users/alexwjung/projects/ProbCox/paper/ProbCox/')
-os.chdir('/nfs/research/gerstung/awj/projects/ProbCox/paper/ProbCox')
+os.chdir('/Users/alexwjung/Desktop/ProbCox/paper/ProbCox/')
+#os.chdir('/nfs/research/gerstung/awj/projects/ProbCox/paper/ProbCox')
 
-# Funtion
+# Function
 # =======================================================================================================================
 def custom_mean(X, W, col_idx):
     '''
@@ -141,7 +141,7 @@ ax[0].set_ylim([-2, 2])
 ax[0].set_xticks([-2, 0, 2])
 ax[0].set_xlim([-2, 2])
 ax[0].plot(ax[0].get_xlim(), ax[0].get_ylim(), ls=':', color='black', linewidth=0.5)
-ax[0].set_title(r'ProbCox - Rank: 50, Batch size: 1024', fontsize=7)
+ax[0].set_title(r'ProbCox - Rank 50, $Batchsize_{obs}$ 1024', fontsize=7)
 
 
 # glmnet
@@ -175,8 +175,9 @@ ax[1].plot(ax[1].get_xlim(), ax[1].get_ylim(), ls=':', color='black', linewidth=
 ax[0].legend(frameon=False, prop={'size': 5}, loc='lower right')
 ax[1].set_title(r'Adaptive Lasso - $\lambda_{min}^{w=\lambda_{1se}}$', fontsize=7)
 
-#plt.show()
+
 plt.savefig('./out/simulation/figures/hd.eps', bbox_inches='tight', dpi=600, transparent=True)
 plt.savefig('./out/simulation/figures/hd.png', bbox_inches='tight', dpi=600, transparent=True)
 plt.savefig('./out/simulation/figures/hd.pdf', bbox_inches='tight', dpi=600, transparent=True)
+plt.show()
 plt.close()

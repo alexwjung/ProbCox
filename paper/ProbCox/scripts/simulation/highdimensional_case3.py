@@ -3,8 +3,8 @@ High Dimensional Case Simulation:
 
 Moderate sized simulation with P >> N >> I and correlated X
 
-individuals:  3000
-covaraites:   2500 binary (0.35), 2500 Normal(0, 1) - correlated
+individuals:  1000
+covaraites:   0 binary (0.35), 3000 Normal(0, 1) - correlated
 theta:        ~ N(0, 0.75^2)
 runs:         200 - Seed = 1, 2, ..., 200
 

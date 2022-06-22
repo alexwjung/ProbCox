@@ -197,7 +197,7 @@ while run:
     run = False
     pyro.clear_param_store()
     m = pcox.PCox(predictor=predictor, sampling_proportion=sampling_proportion)
-    m.initialize(eta=eta, rank=20, num_particles=10)
+    m.initialize(eta=eta, rank=50, num_particles=5)
     loss=[0]
     for __ in range(500):
         for _, __input__ in tqdm.tqdm(enumerate(dataloader)):

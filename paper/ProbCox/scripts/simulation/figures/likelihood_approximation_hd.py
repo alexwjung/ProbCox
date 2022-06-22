@@ -34,8 +34,8 @@ np.random.seed(872)
 torch.manual_seed(945)
 
 #os.chdir('/nfs/nobackup/gerstung/awj/projects/ProbCox/')
-#os.chdir('/Users/alexwjung/projects/ProbCox/paper/ProbCox/')
-os.chdir('/nfs/nobackup/gerstung/awj/projects/ProbCox/paper/ProbCox')
+os.chdir('/Users/alexwjung/Desktop/ProbCox/paper/ProbCox/')
+#os.chdir('/nfs/nobackup/gerstung/awj/projects/ProbCox/paper/ProbCox')
 
 # Plot Settings
 # =======================================================================================================================
@@ -83,7 +83,7 @@ def predictor(data):
 
 pyro.clear_param_store()
 m = pcox.PCox(sampling_proportion=sampling_proportion, predictor=predictor)
-m.initialize(eta=eta, rank=10, num_particles=5)
+m.initialize(eta=eta, rank=50, num_particles=5)
 loss=[0]
 LL_full = []
 LL_batch = []
@@ -144,9 +144,9 @@ ax[1].set_xticks([])
 ax[1].legend(frameon=False, prop={'size': 6})
 
 
-plt.savefig('./out/simulation/figures/likelihood_approximation_highdim.eps', bbox_inches='tight', dpi=600, transparent=True)
-plt.savefig('./out/simulation/figures/likelihood_approximation_highdim.png', bbox_inches='tight', dpi=600, transparent=True)
-plt.savefig('./out/simulation/figures/likelihood_approximation_highdim.pdf', bbox_inches='tight', dpi=600, transparent=True)
+plt.savefig('./out/simulation/figures/likelihood_approximation_highdim_.eps', bbox_inches='tight', dpi=600, transparent=True)
+plt.savefig('./out/simulation/figures/likelihood_approximation_highdim_.png', bbox_inches='tight', dpi=600, transparent=True)
+plt.savefig('./out/simulation/figures/likelihood_approximation_highdim_.pdf', bbox_inches='tight', dpi=600, transparent=True)
 plt.show()
 plt.close()
 
