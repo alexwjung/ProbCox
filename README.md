@@ -1,7 +1,7 @@
 # **Bayesian Cox Regression for Population-scale Inference in Electronic Health Records**.
 
 ## **Paper**
-[arXiv](https://arxiv.org/abs/2106.10057)
+[AOAS](https://www.e-publications.org/ims/submission/AOAS/user/submissionFile/51956?confirm=ae21e3ba)
 
 ## **Description**
 The Cox model is an indispensable tool for time-to-event analysis, particularly in biomedical research. However, medicine is undergoing a profound transformation, generating data at an unprecedented scale, which opens new frontiers to study and understand diseases. With the wealth of data collected, new challenges for statistical inference arise, as datasets are often high dimensional, exhibit an increasing number of measurements at irregularly spaced time points, and are simply too large to fit in memory. Many current implementations for time-to-event analysis are ill-suited for these problems as inference is computationally demanding and requires access to the full data at once.
